@@ -9,7 +9,7 @@ public class GameStartInit : MonoBehaviour
     void Start()
     {
         // 타이틀 화면으로 로딩
-        SceneManager.LoadScene(SceneNameDefine.TITLE_SCENE_NAME);
+        SceneManager.LoadScene(Define.TITLE_SCENE_NAME);
     }
 
 }

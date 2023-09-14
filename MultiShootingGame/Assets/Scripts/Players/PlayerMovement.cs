@@ -27,4 +27,10 @@ public class PlayerMovement : MonoBehaviour
     {
         inputVector = value.Get<Vector2>();
     }
+
+    private void OnDisable()
+    {
+        // 플레이어가 사라지면 엔딩으로 넘어가기
+        GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
+    }
 }

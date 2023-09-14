@@ -9,7 +9,7 @@ public class ButtonManager : MonoBehaviour
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
-        GameManager.Instance.SceneMove(SceneNameDefine.INGAME_SCENE_NAME);
+        GameManager.Instance.SceneMove(Define.INGAME_SCENE_NAME);
     }
 
     // 멀티 플레이 버튼
@@ -32,5 +32,12 @@ public class ButtonManager : MonoBehaviour
     public void QuitGameBtn()
     {
         GameManager.Instance.ExitDesktop();
+    }
+
+    // 타이틀 이동 버튼
+    public void BackToTitle()
+    {
+        GameManager.Instance.SceneMove(Define.TITLE_SCENE_NAME);
+
     }
 }
