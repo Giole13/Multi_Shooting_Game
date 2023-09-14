@@ -2,17 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBullet : Bullet
+public class EnemyBullet : Bullet
 {
-
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 적과 충돌하면 적 끄기
-        if (other.tag == "Enemy")
+        // 플레이어와 충돌하면
+        if (other.tag == "Player")
         {
             other.gameObject.SetActive(false);
         }
         gameObject.SetActive(false);
     }
+
 }

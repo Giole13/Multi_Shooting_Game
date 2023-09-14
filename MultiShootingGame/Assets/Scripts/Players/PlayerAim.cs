@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -9,12 +10,24 @@ public class PlayerAim : MonoBehaviour
 {
     private Vector2 mousePosition;
     [SerializeField] private Transform Weapon;
+    [SerializeField] private GameObject bulletObj;
+    private Vector2 bulletDir;
+    private IBullet bullet;
+    private int damage;
+
+    private void Start()
+    {
+        damage = 10;
+        // bullet = bulletObj.GetComponent<IBullet>();
+    }
 
     void Update()
     {
         // 마우스 입력을 월드 좌표로 계산 및 방향 구하기
         Vector2 len = Camera.main.ScreenToWorldPoint(mousePosition) - transform.position;
-        // 회전값 계산
+
+        // 총알이 나가는 방향을 계산
+        bulletDir = len.normalized;
 
         // 플레이어의 바라보는 방향이 0보다 작으면 왼쪽
         if (len.x <= 0)
@@ -28,6 +41,7 @@ public class PlayerAim : MonoBehaviour
             transform.localScale = new Vector2(1f, 1f);
         }
 
+        // 회전값 계산
         float z = Mathf.Atan2(len.y, len.x) * Mathf.Rad2Deg;
         Weapon.rotation = Quaternion.Euler(0f, 0f, z);
     }
@@ -37,9 +51,15 @@ public class PlayerAim : MonoBehaviour
         mousePosition = value.Get<Vector2>();
     }
 
+    // 좌클릭 함수
     private void OnAttack()
     {
-        Debug.Log("발사");
+        GameObject obj = Instantiate(bulletObj);
+        bullet = obj.GetComponent<IBullet>();
+
+        // 슈팅만 하면 됨
+        bullet.ShottingBullet(bulletDir, transform.position, damage);
+
     }
 
     private void OnSubSkill()

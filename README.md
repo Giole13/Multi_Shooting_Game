@@ -15,10 +15,22 @@
   - Photon 2
   - Firebase
 
+# 작업 목록
+
+- 플레이어
+
+  - 총알 발사
+
+- 적
+
+  - 총알 발사
+
+- 보스
+  - 총알 발사
+
 # 코딩 컴벤션
 
-- 상수 : 대문자
-- public :
+- https://docs.popekim.com/ko/coding-standards/pocu-csharp
 
 # 개발일지
 
@@ -40,3 +52,7 @@
     - 마우스 인풋 추가
     - 마우스 좌클릭, 우클릭 추가
     - 마우스 위치에 따라 총구, 사람도 회전함
+    - 플레이어 사격 구현
+    - 적 총알 발사 구현
+    - 적, 플레이어 피격시 사라짐 구현
+  - LayerMask 설정 추가, Layer Collision Matrix 설정
