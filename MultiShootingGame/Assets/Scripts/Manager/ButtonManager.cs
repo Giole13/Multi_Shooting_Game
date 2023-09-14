@@ -9,7 +9,7 @@ public class ButtonManager : MonoBehaviour
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
-        GameManager.Instance.SceneMove(SceneNameDefine.LOADING_SCENE_NAME);
+        GameManager.Instance.SceneMove(SceneNameDefine.INGAME_SCENE_NAME);
     }
 
     // 멀티 플레이 버튼

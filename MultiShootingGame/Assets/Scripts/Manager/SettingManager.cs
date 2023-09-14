@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // 각종 설정들을 초기화 해주는 클래스
-public class SettingManager : MonoBehaviour
+public class SettingManager : Singleton<SettingManager>
 {
     // 게임 시작시 기본 세팅 초기화
     void Start()
