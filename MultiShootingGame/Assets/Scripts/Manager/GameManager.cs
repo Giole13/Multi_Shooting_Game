@@ -8,16 +8,20 @@ using UnityEngine.SceneManagement;
 public class GameManager : Singleton<GameManager>
 {
     // 싱글, 멀티 구분 bool 타입
-    public bool PlayType { get; private set; } = false;
+    public bool IsMultiPlay { get; private set; } = false;
 
     // 멀티 플레이 설정하는 함수
-    public void MultiPlaySetting() => PlayType = true;
-
-
+    public void MultiPlaySetting()
+    {
+        IsMultiPlay = true;
+    }
 
     /// <summary>씬을 이동하는 함수</summary>
     /// <param name="SceneName">이동할 씬 이름</param>
-    public void SceneMove(string SceneName) => SceneManager.LoadScene(SceneName);
+    public void SceneMove(string SceneName)
+    {
+        SceneManager.LoadScene(SceneName);
+    }
 
 
     // 데스크톱으로 나가는 함수

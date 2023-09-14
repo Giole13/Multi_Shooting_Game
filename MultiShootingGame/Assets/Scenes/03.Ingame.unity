@@ -465,9 +465,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638ec687caf4245498348168184ddbc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletList:
-  - {fileID: 5114697428919920594, guid: 342bc602e2c82fb409182d1733b7a60f, type: 3}
-  - {fileID: 5114697428919920594, guid: 088c8ff37e966364fb0ebd4901367532, type: 3}
+  poolSize: 3
+  playerBullet: {fileID: 5114697428919920594, guid: 342bc602e2c82fb409182d1733b7a60f, type: 3}
+  enemyBullet: {fileID: 5114697428919920594, guid: 088c8ff37e966364fb0ebd4901367532, type: 3}
 --- !u!1 &333521302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1316,7 +1316,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1849222766
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1635,6 +1635,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Weapon: {fileID: 1527781284}
   bulletObj: {fileID: 5114697428919920594, guid: 342bc602e2c82fb409182d1733b7a60f, type: 3}
+  poolManager: {fileID: 326947424}
 --- !u!70 &1895210948
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

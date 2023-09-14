@@ -11,6 +11,7 @@ public class PlayerAim : MonoBehaviour
     private Vector2 mousePosition;
     [SerializeField] private Transform Weapon;
     [SerializeField] private GameObject bulletObj;
+    [SerializeField] private PoolManager poolManager;
     private Vector2 bulletDir;
     private IBullet bullet;
     private int damage;
@@ -54,12 +55,10 @@ public class PlayerAim : MonoBehaviour
     // 좌클릭 함수
     private void OnAttack()
     {
-        GameObject obj = Instantiate(bulletObj);
-        bullet = obj.GetComponent<IBullet>();
+        bullet = poolManager.PullItBullet().GetComponent<IBullet>();
 
         // 슈팅만 하면 됨
         bullet.ShottingBullet(bulletDir, transform.position, damage);
-
     }
 
     private void OnSubSkill()
