@@ -9,9 +9,7 @@ public class ObjectManager : MonoBehaviour
 {
     private void Awake()
     {
-        // PoolManager 비활성화
-        GameObject obj = FindObjectOfType<PoolManager>().gameObject;
-        obj.SetActive(false);
+        GameManager.Instance.Init();
     }
 
 

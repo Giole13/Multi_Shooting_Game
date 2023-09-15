@@ -19,7 +19,6 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
     void Start()
     {
         stats = new Stats(5, 1, 10f);
-        StartCoroutine(FireBullet());
         enemyRigid = GetComponent<Rigidbody2D>();
     }
 
@@ -54,6 +53,7 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
         transform.position = pos;
         gameObject.SetActive(true);
         playerTransform = GameManager.Instance.PlayerTransform;
+        StartCoroutine(FireBullet());
     }
 
     // 몬스터가 사라지면 풀에 다시 넣고 스포너의 카운터 --

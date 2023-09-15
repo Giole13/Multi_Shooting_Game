@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // 플레이어의 기본정보 클래스 
 public class Player : MonoBehaviour, IDamageable
@@ -20,6 +18,7 @@ public class Player : MonoBehaviour, IDamageable
         GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
         if (stats.Health <= 0)
         {
+            // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
         }
     }

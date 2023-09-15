@@ -60,18 +60,17 @@ public class GameManager : Singleton<GameManager>
     // 게임 시작시 모두 초기화
     private void Awake()
     {
-        // SceneManager.sceneLoaded += PoolManagerOnEnable();
-        // // 인게임에 들어온다면 오브젝트 풀링을 켜줘라
-        // if (SceneManager.GetActiveScene().name == Define.INGAME_SCENE_NAME)
-        // {
-        // }
+        DontDestroyOnLoad(gameObject);
     }
 
-    // private void PoolManagerOnEnable()
-    // {
-    //     PoolManager.Instance.gameObject.SetActive(true);
-
-    // }
+    //  게임이 끝나고 전부 초기화 해야해주는 함수
+    public override void Init()
+    {
+        base.Init();
+        playerStatsUI = null;
+        player = null;
+        playerTransform = null;
+    }
 
 
     // 싱글, 멀티 구분 bool 타입

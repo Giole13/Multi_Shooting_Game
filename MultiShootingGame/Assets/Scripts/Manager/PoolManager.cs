@@ -27,11 +27,6 @@ public class PoolManager : Singleton<PoolManager>
 
     private void Awake()
     {
-        if (objectPool != null)
-        {
-            return;
-        }
-
         objectPool = new Dictionary<string, Stack<GameObject>>();
         // 각 오브젝트들의 이름들을 초기화한다.
         for (int i = 0; i < poolList.Count; i++)
