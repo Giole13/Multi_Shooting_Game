@@ -31,7 +31,7 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
         }
     }
 
-    protected void Init()
+    public virtual void Init()
     {
         // 널인 경우 새로운 객체 생성 및 반환
         if (_instance is null)

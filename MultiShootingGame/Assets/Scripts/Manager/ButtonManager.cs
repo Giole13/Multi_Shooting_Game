@@ -9,7 +9,13 @@ public class ButtonManager : MonoBehaviour
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
+        if (PoolManager.Instance.gameObject is null)
+        {
+
+        }
+        PoolManager.Instance.gameObject.SetActive(true);
         GameManager.Instance.SceneMove(Define.INGAME_SCENE_NAME);
+
     }
 
     // 멀티 플레이 버튼

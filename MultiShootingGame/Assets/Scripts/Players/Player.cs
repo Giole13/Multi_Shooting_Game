@@ -13,12 +13,14 @@ public class Player : MonoBehaviour, IDamageable
         stats = new Stats(5, 1, 10f);
     }
 
+    // 공격을 받는 함수
     public virtual void BeAttacked(int damage)
     {
         stats.Health -= damage;
+        GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
         if (stats.Health <= 0)
         {
-            Debug.Log("플레이어 사망!");
+            GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
         }
     }
 

@@ -9,8 +9,9 @@ public class ObjectManager : MonoBehaviour
 {
     private void Awake()
     {
-        // PoolManager 삭제
-        Destroy(FindObjectOfType<PoolManager>().gameObject);
+        // PoolManager 비활성화
+        GameObject obj = FindObjectOfType<PoolManager>().gameObject;
+        obj.SetActive(false);
     }
 
 
