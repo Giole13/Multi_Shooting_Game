@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour, IBullet
 {
+    protected string bulletName;
     private Rigidbody2D bulletRigid;
     // 총알의 데미지
     private int damage;
-
     private bool life = false;
 
     public void OnDisable()
     {
         if (life)
         {
-            PoolManager.Instance.InsertBullet(gameObject);
-            Debug.Log(gameObject.name);
+            PoolManager.Instance.InsertObject(bulletName, gameObject);
             life = false;
         }
     }
@@ -30,15 +29,12 @@ public class Bullet : MonoBehaviour, IBullet
         transform.position = pos;
         bulletRigid.velocity = dir * 10f;
         damage = _damage;
+        StartCoroutine(FadeAwayTimeBullet());
     }
 
-    // // 5초 후 꺼주기
-    // private IEnumerator disappearBullet()
-    // {
-    //     yield return new WaitForSeconds(5f);
-    //     gameObject.SetActive(false);
-    // }
-
-
-
+    private IEnumerator FadeAwayTimeBullet()
+    {
+        yield return new WaitForSeconds(5f);
+        gameObject.SetActive(false);
+    }
 }

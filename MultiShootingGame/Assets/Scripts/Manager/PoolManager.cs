@@ -1,49 +1,107 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 // 여러 오브젝트 풀링들을 책임지는 클래스
 public class PoolManager : Singleton<PoolManager>
 {
     // 풀링 객체
     // 딕셔너리에서 바로 접근 후 뽑아 사용하는 형태
-    // [SerializeField] private Dictionary<string, Stack<GameObject>> bulletPool;
+    private static Dictionary<string, Stack<GameObject>> objectPool = null;
 
-    // // 풀링할 프리팹 리스트
-    // [SerializeField] private List<GameObject> bulletList;
+    private Transform playerTransform;
 
-    [SerializeField] private int poolSize;
+    // 풀링할 프리팹 리스트
+    [SerializeField] private List<poolObjectInfo> poolList;
 
-    [SerializeField] private GameObject playerBullet;
-    [SerializeField] private GameObject enemyBullet;
-
-    private Stack<GameObject> bulletStack;
-    private void Start()
+    [Serializable]
+    private struct poolObjectInfo
     {
-        bulletStack = new Stack<GameObject>();
+        public GameObject obj;
+        public int poolSize;
+        [ReadOnly]
+        public string ObjectName;
+    }
 
-        // poolSize 만큼 오브젝트 생성
-        for (int i = 0; i < poolSize; i++)
+
+    private void Awake()
+    {
+        if (objectPool != null)
         {
-            GameObject obj = Instantiate(playerBullet, transform);
-            bulletStack.Push(obj);
-            obj.name = "Bullet_" + i;
-            obj.SetActive(false);
+            return;
         }
 
+        objectPool = new Dictionary<string, Stack<GameObject>>();
+        // 각 오브젝트들의 이름들을 초기화한다.
+        for (int i = 0; i < poolList.Count; i++)
+        {
+            // 이름 초기화
+            poolObjectInfo temp = poolList[i];
+            temp.ObjectName = poolList[i].obj.name;
+            poolList[i] = temp;
+
+            GameObject bundle = new GameObject(poolList[i].ObjectName + "bundle");
+            Instantiate(bundle, transform);
+            Destroy(bundle);
+
+            Stack<GameObject> bulletStack = new Stack<GameObject>();
+            // 풀 사이즈만큼 풀링 초기화
+            for (int j = 0; j < poolList[i].poolSize; j++)
+            {
+                GameObject bullet = Instantiate(poolList[i].obj, transform.GetChild(i));
+                bullet.name += "_" + j;
+                bullet.SetActive(false);
+                bulletStack.Push(bullet);
+            }
+
+            // 딕셔너리에 추가
+            objectPool.Add(poolList[i].ObjectName, bulletStack);
+        }
     }
 
-    // 총알을 뽑는 변수
-    public GameObject PullItBullet()
+    // 풀의 이름에서 오브젝트를 뽑는 함수
+    public GameObject PullItObject(string poolName)
     {
-        GameObject obj = bulletStack.Pop();
-        return obj;
+        return objectPool[poolName].Pop();
     }
 
-    public void InsertBullet(GameObject obj)
+    // 풀의 이름에 오브젝트 넣는 함수
+    public void InsertObject(string poolName, GameObject obj)
     {
-        bulletStack.Push(obj);
+        objectPool[poolName].Push(obj);
     }
+}
 
 
+#if UNITY_EDITOR
+namespace UnityEditor
+{
+    [CustomPropertyDrawer(typeof(ReadOnlyAttribute), true)]
+    public class ReadOnlyAttributeDrawer : PropertyDrawer
+    {
+        // Necessary since some properties tend to collapse smaller than their content
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            return EditorGUI.GetPropertyHeight(property, label, true);
+        }
+        // Draw a disabled property field
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            GUI.enabled = !Application.isPlaying && ((ReadOnlyAttribute)attribute).runtimeOnly;
+            EditorGUI.PropertyField(position, property, label, true);
+            GUI.enabled = true;
+        }
+    }
+}
+#endif
+[AttributeUsage(AttributeTargets.Field)]
+public class ReadOnlyAttribute : PropertyAttribute
+{
+    public readonly bool runtimeOnly;
+    public ReadOnlyAttribute(bool runtimeOnly = false)
+    {
+        this.runtimeOnly = runtimeOnly;
+    }
 }

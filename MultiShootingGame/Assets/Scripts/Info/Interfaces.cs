@@ -17,6 +17,14 @@ public interface IAttack
 }
 
 
+
+// 위치를 지정해줘야하는 인터페이스
+public interface ISetPosition
+{
+    public void SetPosition(Vector2 pos);
+}
+
+
 // 총알의 움직임을 구현
 public interface IBullet
 {

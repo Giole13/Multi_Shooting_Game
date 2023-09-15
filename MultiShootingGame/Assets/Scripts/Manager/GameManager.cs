@@ -7,6 +7,22 @@ using UnityEngine.SceneManagement;
 // 게임의 시스템을 책임지는 클래스
 public class GameManager : Singleton<GameManager>
 {
+
+    private Transform playerTransform;
+    public Transform PlayerTransform
+    {
+        get
+        {
+            if (playerTransform is null)
+            {
+                playerTransform = GameObject.FindWithTag("Player").transform;
+                return playerTransform;
+            }
+            return playerTransform;
+        }
+    }
+
+
     // 싱글, 멀티 구분 bool 타입
     public bool IsMultiPlay { get; private set; } = false;
 
@@ -20,7 +36,7 @@ public class GameManager : Singleton<GameManager>
     /// <param name="SceneName">이동할 씬 이름</param>
     public void SceneMove(string SceneName)
     {
-        SceneManager.LoadScene(SceneName);
+        SceneManager.LoadScene(SceneName, LoadSceneMode.Single);
     }
 
 

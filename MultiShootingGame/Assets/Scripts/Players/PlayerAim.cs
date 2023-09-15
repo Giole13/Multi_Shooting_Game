@@ -55,7 +55,7 @@ public class PlayerAim : MonoBehaviour
     // 좌클릭 함수
     private void OnAttack()
     {
-        bullet = poolManager.PullItBullet().GetComponent<IBullet>();
+        bullet = poolManager.PullItObject("PlayerBullet").GetComponent<IBullet>();
 
         // 슈팅만 하면 됨
         bullet.ShottingBullet(bulletDir, transform.position, damage);
