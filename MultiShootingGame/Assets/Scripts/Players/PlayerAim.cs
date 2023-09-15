@@ -8,18 +8,22 @@ using UnityEngine.InputSystem.Controls;
 // 플레이어의 마우스 인풋을 책임지는 클래스
 public class PlayerAim : MonoBehaviour
 {
+    private Player player;
+
     private Vector2 mousePosition;
     [SerializeField] private Transform Weapon;
     [SerializeField] private GameObject bulletObj;
     [SerializeField] private PoolManager poolManager;
     private Vector2 bulletDir;
     private IBullet bullet;
-    private int damage;
+
+
+
 
     private void Start()
     {
-        damage = 10;
-        // bullet = bulletObj.GetComponent<IBullet>();
+        // 플레이어 정보 초기화
+        player = GameManager.Instance.Player;
     }
 
     void Update()
@@ -58,7 +62,7 @@ public class PlayerAim : MonoBehaviour
         bullet = poolManager.PullItObject("PlayerBullet").GetComponent<IBullet>();
 
         // 슈팅만 하면 됨
-        bullet.ShottingBullet(bulletDir, transform.position, damage);
+        bullet.ShottingBullet(bulletDir, transform.position, player.stats.Damage);
     }
 
     private void OnSubSkill()

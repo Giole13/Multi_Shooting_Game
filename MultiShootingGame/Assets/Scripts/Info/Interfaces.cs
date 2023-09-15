@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-
-public interface IDamage
+// 피격을 받아 체력이 줄어들 수 있는 인터페이스
+public interface IDamageable
 {
-
+    public void BeAttacked(int damage);
 }
 
 

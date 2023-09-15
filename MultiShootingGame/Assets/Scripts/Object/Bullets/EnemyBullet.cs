@@ -14,8 +14,7 @@ public class EnemyBullet : Bullet
         // 플레이어와 충돌하면
         if (other.tag == "Player")
         {
-            // other.gameObject.SetActive(false);
-            Debug.Log("충돌!");
+            other.GetComponent<IDamageable>().BeAttacked(damage);
         }
         gameObject.SetActive(false);
     }

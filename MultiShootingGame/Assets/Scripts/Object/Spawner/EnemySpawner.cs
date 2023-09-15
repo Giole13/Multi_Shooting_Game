@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,12 +9,19 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField] private List<Transform> spawnPoint;
 
+    [SerializeField] private int maxSpawnCount = 5;
+    [ReadOnly] private int currentSpawnCount;
 
+    public EnemySpawner()
+    {
+        currentSpawnCount = 0;
+    }
 
     private void Awake()
     {
         StartCoroutine(EnemyCreate());
     }
+
 
     // 일정 시간마다 랜덤 스폰 포인터에 적 소환
     private IEnumerator EnemyCreate()
@@ -21,10 +29,17 @@ public class EnemySpawner : MonoBehaviour
         int randomIndex;
         while (true)
         {
+            // 최대 스폰까지 도달한다면 멈춤
+            if (currentSpawnCount >= maxSpawnCount)
+            {
+                yield break;
+            }
             yield return createCycleTime;
-            randomIndex = Random.Range(0, spawnPoint.Count);
+            randomIndex = UnityEngine.Random.Range(0, spawnPoint.Count);
             PoolManager.Instance.PullItObject("Enemy").GetComponent<ISetPosition>().SetPosition(spawnPoint[randomIndex].position);
+            currentSpawnCount++;
         }
+
     }
 
 }

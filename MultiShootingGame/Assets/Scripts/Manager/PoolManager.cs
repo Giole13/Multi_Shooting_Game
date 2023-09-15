@@ -25,7 +25,6 @@ public class PoolManager : Singleton<PoolManager>
         public string ObjectName;
     }
 
-
     private void Awake()
     {
         if (objectPool != null)
@@ -71,37 +70,5 @@ public class PoolManager : Singleton<PoolManager>
     public void InsertObject(string poolName, GameObject obj)
     {
         objectPool[poolName].Push(obj);
-    }
-}
-
-
-#if UNITY_EDITOR
-namespace UnityEditor
-{
-    [CustomPropertyDrawer(typeof(ReadOnlyAttribute), true)]
-    public class ReadOnlyAttributeDrawer : PropertyDrawer
-    {
-        // Necessary since some properties tend to collapse smaller than their content
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
-            return EditorGUI.GetPropertyHeight(property, label, true);
-        }
-        // Draw a disabled property field
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-        {
-            GUI.enabled = !Application.isPlaying && ((ReadOnlyAttribute)attribute).runtimeOnly;
-            EditorGUI.PropertyField(position, property, label, true);
-            GUI.enabled = true;
-        }
-    }
-}
-#endif
-[AttributeUsage(AttributeTargets.Field)]
-public class ReadOnlyAttribute : PropertyAttribute
-{
-    public readonly bool runtimeOnly;
-    public ReadOnlyAttribute(bool runtimeOnly = false)
-    {
-        this.runtimeOnly = runtimeOnly;
     }
 }

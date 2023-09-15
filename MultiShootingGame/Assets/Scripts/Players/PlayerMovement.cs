@@ -7,19 +7,20 @@ using UnityEngine.InputSystem;
 // 플레이어의 이동에 관해 처리합니다.
 public class PlayerMovement : MonoBehaviour
 {
-    public float Speed = 10;
+    Player player;
 
     private Vector2 inputVector;
     private Rigidbody2D playerRigid;
 
     private void Start()
     {
+        player = GameManager.Instance.Player;
         playerRigid = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
     {
-        Vector2 nextVec = inputVector * Speed * Time.fixedDeltaTime;
+        Vector2 nextVec = inputVector * player.stats.Speed * Time.fixedDeltaTime;
         playerRigid.MovePosition(playerRigid.position + nextVec);
     }
 

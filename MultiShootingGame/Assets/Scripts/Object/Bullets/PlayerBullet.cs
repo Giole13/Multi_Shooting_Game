@@ -11,10 +11,10 @@ public class PlayerBullet : Bullet
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 적과 충돌하면 적 끄기
+        // 적과 충돌하면 적 공격받음 실행
         if (other.tag == "Enemy")
         {
-            other.gameObject.SetActive(false);
+            other.GetComponent<IDamageable>().BeAttacked(damage);
         }
         gameObject.SetActive(false);
     }

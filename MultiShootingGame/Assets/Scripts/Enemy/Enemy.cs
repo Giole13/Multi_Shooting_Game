@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, ISetPosition
+public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 {
+    private Stats stats;
+
     // 발사 주기는 1초
     private WaitForSeconds fireCycle = new WaitForSeconds(1f);
 
@@ -11,13 +13,12 @@ public class Enemy : MonoBehaviour, ISetPosition
     private Rigidbody2D enemyRigid;
     private Vector2 bulletDir;
     private IBullet bullet;
-    private int damage;
 
     private bool life = false;
 
     void Start()
     {
-        damage = 10;
+        stats = new Stats(5, 1, 10f);
         StartCoroutine(FireBullet());
         enemyRigid = GetComponent<Rigidbody2D>();
     }
@@ -42,7 +43,7 @@ public class Enemy : MonoBehaviour, ISetPosition
         {
             yield return fireCycle;
             bullet = PoolManager.Instance.PullItObject("EnemyBullet").GetComponent<IBullet>();
-            bullet.ShottingBullet(bulletDir, transform.position, damage);
+            bullet.ShottingBullet(bulletDir, transform.position, stats.Damage);
         }
     }
 
@@ -55,12 +56,23 @@ public class Enemy : MonoBehaviour, ISetPosition
         playerTransform = GameManager.Instance.PlayerTransform;
     }
 
+    // 몬스터가 사라지면 풀에 다시 넣고 스포너의 카운터 --
     private void OnDisable()
     {
         if (life)
         {
             life = false;
             PoolManager.Instance.InsertObject("Enemy", gameObject);
+            // EnemySpawner.currentSpawnCount--;
+        }
+    }
+
+    public void BeAttacked(int damage)
+    {
+        stats.Health -= damage;
+        if (stats.Health <= 0)
+        {
+            gameObject.SetActive(false);
         }
     }
 }

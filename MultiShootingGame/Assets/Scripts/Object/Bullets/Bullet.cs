@@ -7,7 +7,7 @@ public class Bullet : MonoBehaviour, IBullet
     protected string bulletName;
     private Rigidbody2D bulletRigid;
     // 총알의 데미지
-    private int damage;
+    protected int damage;
     private bool life = false;
 
     public void OnDisable()

@@ -15,6 +15,4 @@ public class Define : MonoBehaviour
     #endregion 씬의 이름
 
 
-
-
 }

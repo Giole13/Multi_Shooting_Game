@@ -7,8 +7,22 @@ using UnityEngine.SceneManagement;
 // 게임의 시스템을 책임지는 클래스
 public class GameManager : Singleton<GameManager>
 {
+    private Player player = null;
+    public Player Player
+    {
+        get
+        {
+            if (player is null)
+            {
+                player = PlayerTransform.GetComponent<Player>();
+                return player;
+            }
+            return player;
+        }
+    }
 
-    private Transform playerTransform;
+
+    private Transform playerTransform = null;
     public Transform PlayerTransform
     {
         get
