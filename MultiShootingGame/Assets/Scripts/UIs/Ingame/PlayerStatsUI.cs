@@ -15,8 +15,8 @@ public class PlayerStatsUI : MonoBehaviour
     private void Start()
     {
         player = GameManager.Instance.Player;
-
         GameObject hpobj = hpObject;
+
         // hp 스택을 플레이어 hp 만큼 초기화
         for (int i = 0; i < player.stats.Health; i++)
         {
