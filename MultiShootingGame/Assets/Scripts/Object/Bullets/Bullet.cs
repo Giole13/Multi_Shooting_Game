@@ -27,7 +27,7 @@ public class Bullet : MonoBehaviour, IBullet
         life = true;
         bulletRigid = GetComponent<Rigidbody2D>();
         transform.position = pos;
-        bulletRigid.velocity = dir * 10f;
+        bulletRigid.velocity = dir;
         damage = _damage;
         StartCoroutine(FadeAwayTimeBullet());
     }

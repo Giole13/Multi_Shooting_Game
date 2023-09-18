@@ -23,7 +23,6 @@ public class PlayerInputHandler : MonoBehaviour
     {
         // 총구의 방향을 계산하는 로직
         bulletDir = (Camera.main.ScreenToWorldPoint(mousePosition) - transform.position).normalized;
-
     }
 
     private void OnAim(InputValue value)

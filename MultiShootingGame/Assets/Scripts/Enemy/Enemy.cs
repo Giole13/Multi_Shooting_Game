@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 {
+    [SerializeField] protected float bulletSpeed = 10;
+
     protected Stats stats;
 
     // 발사 주기는 1초
@@ -37,7 +39,7 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
     private void Update()
     {
         // 총알 위치는 플레이어 방향
-        bulletDir = (playerTransform.position - transform.position).normalized;
+        bulletDir = (playerTransform.position - transform.position).normalized * bulletSpeed;
     }
 
     // 공격을 하는 함수

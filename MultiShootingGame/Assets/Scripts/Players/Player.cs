@@ -19,8 +19,8 @@ public class Player : MonoBehaviour, IDamageable
     // 공격을 받는 함수
     public virtual void BeAttacked(int damage)
     {
-        stats.Health -= damage;
-        GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
+        // stats.Health -= damage;
+        // GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
         if (stats.Health <= 0)
         {
             GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);

@@ -83,11 +83,13 @@ public class PlayerAttack : MonoBehaviour, IGunChangeable
     // 총을 획득하면 해당 총으로 바꾼다.
     public void ChangeWeapon(Transform gunTransform)
     {
+        playerBaseGun.enabled = false;
         playerBaseGun.gameObject.SetActive(false);
 
         // 가지고 있는 총의 상위 객체로 위치를 옮긴다.
         // 이후 총의 초기화 함수 호출
         gunTransform.SetParent(playerBaseGun.transform.parent);
+        gunTransform.TryGetComponent<Gun>(out playerBaseGun);
         gunTransform.TryGetComponent<IGun>(out playerGun);
         playerGun.Init(player);
 
