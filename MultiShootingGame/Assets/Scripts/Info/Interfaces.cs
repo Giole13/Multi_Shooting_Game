@@ -9,11 +9,23 @@ public interface IDamageable
     public void BeAttacked(int damage);
 }
 
-
-// 공격 구현
-public interface IAttack
+// 총을 바꿀 수 있는 인터페이스
+public interface IGunChangeable
 {
+    public void ChangeWeapon(Transform gunTransform);
+}
 
+// 총을 구현
+public interface IGun
+{
+    // 총알을 발사하는 함수
+    public void BulletFire();
+
+    // 공격을 멈추는 함수
+    public void BulletFireStop();
+
+    // 총을 획들했을 때 초기화 하는 함수
+    public void Init(Player player);
 }
 
 

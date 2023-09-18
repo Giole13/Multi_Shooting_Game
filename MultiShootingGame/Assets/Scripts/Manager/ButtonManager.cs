@@ -9,13 +9,7 @@ public class ButtonManager : MonoBehaviour
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
-        // // 재시작시 풀매니저는 켜주기만 한다.
-        // if (PoolManager.Instance.gameObject != null)
-        // {
-        //     PoolManager.Instance.gameObject.SetActive(true);
-        // }
         GameManager.Instance.SceneMove(Define.INGAME_SCENE_NAME);
-
     }
 
     // 멀티 플레이 버튼

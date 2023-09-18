@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 {
-    private Stats stats;
+    protected Stats stats;
 
     // 발사 주기는 1초
     private WaitForSeconds fireCycle = new WaitForSeconds(1f);
@@ -16,17 +16,21 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 
     private bool life = false;
 
-    void Start()
+    private void Start()
     {
         stats = new Stats(5, 1, 10f);
         enemyRigid = GetComponent<Rigidbody2D>();
+        Init();
     }
+
+    // 상속받은 곳에서 사용할 것
+    protected virtual void Init() { }
 
 
     private void FixedUpdate()
     {
-        // 움직임 계산
-        Vector2 nextVec = bulletDir * Time.fixedDeltaTime;
+        // 플레이어 방향으로 움직임 계산
+        Vector2 nextVec = (playerTransform.position - transform.position).normalized * Time.fixedDeltaTime;
         enemyRigid.MovePosition(enemyRigid.position + nextVec);
     }
 
@@ -36,7 +40,8 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
         bulletDir = (playerTransform.position - transform.position).normalized;
     }
 
-    private IEnumerator FireBullet()
+    // 공격을 하는 함수
+    protected virtual IEnumerator FireBullet()
     {
         while (true)
         {
@@ -63,10 +68,10 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
         {
             life = false;
             PoolManager.Instance.InsertObject("Enemy", gameObject);
-            // EnemySpawner.currentSpawnCount--;
         }
     }
 
+    // 공격을 받는 함수
     public void BeAttacked(int damage)
     {
         stats.Health -= damage;

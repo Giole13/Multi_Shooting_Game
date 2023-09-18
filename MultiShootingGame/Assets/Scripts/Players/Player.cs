@@ -6,6 +6,11 @@ public class Player : MonoBehaviour, IDamageable
 {
     public Stats stats;
 
+    public Vector2 bulletDir
+    {
+        get; protected set;
+    }
+
     private void Awake()
     {
         stats = new Stats(5, 1, 10f);
@@ -18,7 +23,6 @@ public class Player : MonoBehaviour, IDamageable
         GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
         if (stats.Health <= 0)
         {
-            // SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
         }
     }

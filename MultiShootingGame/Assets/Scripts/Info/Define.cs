@@ -10,7 +10,7 @@ public class Define : MonoBehaviour
     public const string LOADING_SCENE_NAME = "02.Loading";
     public const string SELECTCHARACTER_SCENE_NAME = "03_1.SelectCharacter";
     public const string INGAME_SCENE_NAME = "03_2.Ingame";
-    public const string BOSS_SCENE_NAME = "04.Boss";
+    public const string BOSS_SCENE_NAME = "03_3.Boss";
     public const string ENDING_SCENE_NAME = "05.Ending";
     #endregion 씬의 이름
 

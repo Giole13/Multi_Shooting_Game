@@ -47,7 +47,7 @@ public class GameManager : Singleton<GameManager>
         {
             if (playerTransform is null)
             {
-                playerTransform = GameObject.FindWithTag("Player").transform;
+                playerTransform = GameObject.Find("Player").transform;
                 return playerTransform;
             }
             return playerTransform;
