@@ -8,10 +8,10 @@ public class Boss : Enemy
     // 보스의 스탯을 초기화
     protected override void Init()
     {
-        stats = new Stats(20, 2, 20f);
+        stats = new Stats(20, 2, 2f);
     }
 
-    // protected virtual IEnumerator FireBullet()
+    // protected override IEnumerator FireBullet()
     // {
     //     while (true)
     //     {
@@ -20,4 +20,5 @@ public class Boss : Enemy
     //         bullet.ShottingBullet(bulletDir, transform.position, stats.Damage);
     //     }
     // }
+
 }

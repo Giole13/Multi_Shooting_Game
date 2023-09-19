@@ -31,23 +31,16 @@ public class PlayerAttack : MonoBehaviour, IGunChangeable
         // 플레이어 정보 초기화
         player = GameManager.Instance.Player;
         playerGun = playerBaseGun;
-        playerGun.Init(player);
+        playerGun.Init(Define.PLAYER_BULLET_NAME);
         IsFire = false;
     }
 
     void Update()
     {
         // 플레이어의 바라보는 방향이 0보다 작으면 왼쪽
-        if (playerInputHandler.bulletDir.x <= 0)
-        {
-            WeaponPointTransform.localScale = new Vector2(-1f, 1f);
-            transform.localScale = new Vector2(-1f, 1f);
-        }
-        else
-        {
-            WeaponPointTransform.localScale = new Vector2(1f, 1f);
-            transform.localScale = new Vector2(1f, 1f);
-        }
+        float flipX = (playerInputHandler.bulletDir.x <= 0) ? -1f : 1f;
+        WeaponPointTransform.localScale = new Vector2(flipX, 1f);
+        transform.localScale = new Vector2(flipX, 1f);
 
         // 회전값 계산
         float z = Mathf.Atan2(playerInputHandler.bulletDir.y, playerInputHandler.bulletDir.x) * Mathf.Rad2Deg;
@@ -91,7 +84,7 @@ public class PlayerAttack : MonoBehaviour, IGunChangeable
         gunTransform.SetParent(playerBaseGun.transform.parent);
         gunTransform.TryGetComponent<Gun>(out playerBaseGun);
         gunTransform.TryGetComponent<IGun>(out playerGun);
-        playerGun.Init(player);
+        playerGun.Init(Define.PLAYER_BULLET_NAME);
 
     }
 }

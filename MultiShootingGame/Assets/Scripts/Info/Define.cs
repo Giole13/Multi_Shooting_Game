@@ -14,5 +14,10 @@ public class Define : MonoBehaviour
     public const string ENDING_SCENE_NAME = "05.Ending";
     #endregion 씬의 이름
 
+    #region 총알의 이름
+    public const string PLAYER_BULLET_NAME = "PlayerBullet";
+    public const string ENEMY_BULLET_NAME = "EnemyBullet";
+
+    #endregion 총알의 이름
 
 }

@@ -7,10 +7,12 @@ using UnityEngine;
 public class ShotGun : Gun
 {
     // 공격시 나갈 총알의 개수
-    [ReadOnly] private int totalNumberBullets = 13;
+    [ReadOnly] private int totalNumberBullets = 5;
 
     [SerializeField] private Transform bulletSpawnPoint;
-    private float shootAngle = 5f;
+
+    // 각각의 총알사이의 각도
+    private float shootAngle = 10f;
 
     // 값 초기화
     public override void SettingGun()
@@ -21,32 +23,27 @@ public class ShotGun : Gun
     }
 
     //샷건의 공격 로직
-    protected override IEnumerator FireDefualtGunRoutine()
+    protected override IEnumerator FireGunRoutine()
     {
         IsFire = true;
         while (IsFire && IsFire2)
         {
             // 산탄으로 발사하는 로직
-            Vector2 dir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - bulletSpawnPoint.position).normalized;
-
-            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            float angle = Mathf.Atan2(transform.right.y, transform.right.x) * Mathf.Rad2Deg;
 
             bulletSpawnPoint.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
 
             bulletSpawnPoint.Rotate(new Vector3(0, 0, shootAngle * (totalNumberBullets / 2)));
 
-
             for (int i = 0; i < totalNumberBullets; i++)
             {
                 // 풀매니저에서 총알을 참조하고
-                PoolManager.Instance.PullItObject("PlayerBullet").TryGetComponent<IBullet>(out bullet);
+                PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
                 // 슈팅만 하면 됨
                 bullet.ShottingBullet(bulletSpawnPoint.up * bulletSpeed, transform.position, damage);
 
                 bulletSpawnPoint.Rotate(new Vector3(0, 0, -shootAngle));
             }
-
-
 
             IsFire2 = false;
             yield return gunFireDelay;

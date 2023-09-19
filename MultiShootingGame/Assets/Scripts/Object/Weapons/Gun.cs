@@ -9,30 +9,27 @@ public class Gun : MonoBehaviour, IGun
     [SerializeField] protected int GunDamage;
     [SerializeField] protected float bulletSpeed;
     [SerializeField] protected float FiredDelayTime;
-    [SerializeField] protected PlayerInputHandler playerInputHandler;
     protected WaitForSeconds gunFireDelay;
     protected bool IsFire2;
     protected IBullet bullet;
     protected bool IsFire;
 
-
-
-
+    protected string useBulletName;
 
     // 기본 공격 함수, 공격중일 경우 계속 공격
     public void BulletFire()
     {
-        StartCoroutine(FireDefualtGunRoutine());
+        StartCoroutine(FireGunRoutine());
     }
 
     // 기본 총의 공격 로직
-    protected virtual IEnumerator FireDefualtGunRoutine()
+    protected virtual IEnumerator FireGunRoutine()
     {
         IsFire = true;
         while (IsFire && IsFire2)
         {
             // 풀매니저에서 총알을 참조하고
-            PoolManager.Instance.PullItObject("PlayerBullet").TryGetComponent<IBullet>(out bullet);
+            PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
             // 슈팅만 하면 됨
             bullet.ShottingBullet(transform.right * bulletSpeed, transform.position, damage);
             IsFire2 = false;
@@ -41,14 +38,15 @@ public class Gun : MonoBehaviour, IGun
         }
     }
 
-    // 무기를 획득하면 무기의 값을 초기화
-    public void Init(Player player)
+    // 무기를 획득하면 무기의 값을 초기화, 사용할 총알의 이름 초기화
+    public void Init(string bulletName)
     {
         SettingGun();
 
+
+        useBulletName = bulletName;
         IsFire2 = true;
-        damage = player.stats.Damage * GunDamage;
-        player.transform.TryGetComponent<PlayerInputHandler>(out playerInputHandler);
+        damage = GunDamage;
         transform.localPosition = new Vector2(1f, 0f);
         transform.localRotation = Quaternion.Euler(Vector3.zero);
         gunFireDelay = new WaitForSeconds(FiredDelayTime);

@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 public class Player : MonoBehaviour, IDamageable
 {
     public Stats stats;
-
     public Vector2 bulletDir
     {
         get; protected set;
@@ -19,8 +18,9 @@ public class Player : MonoBehaviour, IDamageable
     // 공격을 받는 함수
     public virtual void BeAttacked(int damage)
     {
-        // stats.Health -= damage;
-        // GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
+        // 2023.09.20 / HyungJun / 디버그용 주석 - 플레이어 무적
+        stats.Health -= damage;
+        GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
         if (stats.Health <= 0)
         {
             GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);

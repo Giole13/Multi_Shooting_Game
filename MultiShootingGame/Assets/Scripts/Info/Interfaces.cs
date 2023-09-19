@@ -15,6 +15,8 @@ public interface IGunChangeable
     public void ChangeWeapon(Transform gunTransform);
 }
 
+
+
 // 총을 구현
 public interface IGun
 {
@@ -24,8 +26,8 @@ public interface IGun
     // 공격을 멈추는 함수
     public void BulletFireStop();
 
-    // 총을 획들했을 때 초기화 하는 함수
-    public void Init(Player player);
+    // 총을 획들했을 때 초기화 하는 함수, 사용할 총알의 이름을 매개변수로 받는다.
+    public void Init(string bulletName);
 }
 
 

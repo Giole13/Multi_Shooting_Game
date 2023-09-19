@@ -34,6 +34,7 @@ public class EnemySpawner : MonoBehaviour
         while (true)
         {
             randomIndex = UnityEngine.Random.Range(0, spawnPoint.Count);
+            yield return createCycleTime;
             // 최대 스폰까지 도달한다면 멈추고 보스 소환
             if (currentSpawnCount >= maxSpawnCount)
             {
@@ -41,7 +42,6 @@ public class EnemySpawner : MonoBehaviour
                 bossTransform.gameObject.SetActive(true);
                 yield break;
             }
-            yield return createCycleTime;
             PoolManager.Instance.PullItObject("Enemy").GetComponent<ISetPosition>().SetPosition(spawnPoint[randomIndex].position);
             currentSpawnCount++;
         }

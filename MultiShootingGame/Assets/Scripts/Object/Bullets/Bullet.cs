@@ -19,7 +19,6 @@ public class Bullet : MonoBehaviour, IBullet
         }
     }
 
-
     // 총알을 발사하는 것을 구현
     public void ShottingBullet(Vector2 dir, Vector2 pos, int _damage)
     {

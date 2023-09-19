@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class MachineGun : Gun
 {
-
     public override void SettingGun()
     {
         bulletSpeed = 30f;
@@ -12,4 +11,6 @@ public class MachineGun : Gun
         IsFire2 = true;
         GunDamage = 1;
     }
+
+
 }
