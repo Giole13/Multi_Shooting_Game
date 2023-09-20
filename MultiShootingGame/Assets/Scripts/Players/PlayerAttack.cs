@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,45 +7,51 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 // 플레이어의 공격을 책임지는 클래스
-public class PlayerAttack : MonoBehaviour, IGunChangeable
+public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
 {
     [SerializeField] private Gun playerBaseGun;
     private IGun playerGun;
 
-    private Player player;
     private PlayerInputHandler playerInputHandler;
 
-    [SerializeField] private Transform WeaponPointTransform;
+
+    [SerializeField] private Transform weaponPointTransform;
+    [SerializeField] private Transform playerSkillTransform;
     public Vector2 bulletDir
     {
         get; private set;
     }
+
+    private Queue<Transform> weaponQueue;
 
     private bool IsFire;
 
     private void Awake()
     {
         TryGetComponent<PlayerInputHandler>(out playerInputHandler);
+        weaponQueue = new Queue<Transform>();
     }
     private void Start()
     {
         // 플레이어 정보 초기화
-        player = GameManager.Instance.Player;
         playerGun = playerBaseGun;
-        playerGun.Init(Define.PLAYER_BULLET_NAME);
+        playerGun.Init();
         IsFire = false;
+        IsSkillActive = false;
+
+        playerSkillTransform.gameObject.SetActive(false);
     }
 
     void Update()
     {
         // 플레이어의 바라보는 방향이 0보다 작으면 왼쪽
         float flipX = (playerInputHandler.bulletDir.x <= 0) ? -1f : 1f;
-        WeaponPointTransform.localScale = new Vector2(flipX, 1f);
+        weaponPointTransform.localScale = new Vector2(flipX, 1f);
         transform.localScale = new Vector2(flipX, 1f);
 
         // 회전값 계산
         float z = Mathf.Atan2(playerInputHandler.bulletDir.y, playerInputHandler.bulletDir.x) * Mathf.Rad2Deg;
-        WeaponPointTransform.rotation = Quaternion.Euler(0f, 0f, z);
+        weaponPointTransform.rotation = Quaternion.Euler(0f, 0f, z);
     }
 
 
@@ -67,24 +74,71 @@ public class PlayerAttack : MonoBehaviour, IGunChangeable
         }
     }
 
-    // 우클릭 함수
+
+    private bool IsSkillActive;
+
+    // 스킬을 사용하는 함수
     private void OnSubSkill()
     {
-        Debug.Log("보조 스킬!");
+        StartCoroutine(SkillActive());
+        IEnumerator SkillActive()
+        {
+            // 스킬이 활성화 되어있다면 스킬 사용 불가능
+            if (IsSkillActive)
+            {
+                yield break;
+            }
+            IsSkillActive = true;
+            playerSkillTransform.gameObject.SetActive(true);
+            float scale = 0.1f;
+            while (true)
+            {
+                playerSkillTransform.localScale = new Vector2(scale, scale);
+                scale += 0.3f;
+                yield return null;
+                // 스킬의 한 사이클
+                if (45f <= scale)
+                {
+                    playerSkillTransform.gameObject.SetActive(false);
+                    IsSkillActive = false;
+                    yield break;
+                }
+            }
+        }
     }
 
-    // 총을 획득하면 해당 총으로 바꾼다.
-    public void ChangeWeapon(Transform gunTransform)
+    // 가지고 있는 총을 스왑하는 함수
+    private void OnGunChange()
     {
-        playerBaseGun.enabled = false;
-        playerBaseGun.gameObject.SetActive(false);
+        ChangeWeapon();
+    }
+
+    // 총을 최초로 획득하면 해당 총으로 바꾸고 값을 초기화한다.
+    public void FirstAcquisitionChangeWeapon(Transform gunTransform)
+    {
+        weaponQueue.Enqueue(gunTransform);
 
         // 가지고 있는 총의 상위 객체로 위치를 옮긴다.
         // 이후 총의 초기화 함수 호출
         gunTransform.SetParent(playerBaseGun.transform.parent);
-        gunTransform.TryGetComponent<Gun>(out playerBaseGun);
-        gunTransform.TryGetComponent<IGun>(out playerGun);
-        playerGun.Init(Define.PLAYER_BULLET_NAME);
 
+        ChangeWeapon();
     }
+
+    // 무기를 획득했을때 실행하는 함수
+    private void ChangeWeapon()
+    {
+        playerBaseGun.enabled = false;
+        playerBaseGun.gameObject.SetActive(false);
+
+        weaponQueue.Enqueue(playerBaseGun.transform);
+        weaponQueue.Dequeue().TryGetComponent<Gun>(out playerBaseGun);
+        playerBaseGun.TryGetComponent<IGun>(out playerGun);
+
+        playerBaseGun.enabled = true;
+        playerBaseGun.gameObject.SetActive(true);
+
+        playerGun.Init();
+    }
+
 }

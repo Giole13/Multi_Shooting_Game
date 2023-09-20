@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 278437262578014540}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: WeaponPoint
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -295,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2397325576703787679, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
       propertyPath: m_Layer
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6965856585711285938, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
       propertyPath: m_LocalPosition.x
@@ -337,8 +337,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 5700988778104918817, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
+    - target: {fileID: 9012122883416726811, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

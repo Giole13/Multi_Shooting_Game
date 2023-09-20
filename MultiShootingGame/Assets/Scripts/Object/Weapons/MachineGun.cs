@@ -6,11 +6,6 @@ public class MachineGun : Gun
 {
     public override void SettingGun()
     {
-        bulletSpeed = 30f;
-        FiredDelayTime = 0.2f;
-        IsFire2 = true;
-        GunDamage = 1;
+        gunSpec = new GunSpecifications(1, 30f, 0.2f, 100);
     }
-
-
 }

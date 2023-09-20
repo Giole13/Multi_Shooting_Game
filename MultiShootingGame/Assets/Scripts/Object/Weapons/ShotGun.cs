@@ -17,9 +17,7 @@ public class ShotGun : Gun
     // 값 초기화
     public override void SettingGun()
     {
-        bulletSpeed = 20f;
-        FiredDelayTime = 0.3f;
-        GunDamage = 1;
+        gunSpec = new GunSpecifications(1, 20f, 0.8f, 50);
     }
 
     //샷건의 공격 로직
@@ -40,7 +38,14 @@ public class ShotGun : Gun
                 // 풀매니저에서 총알을 참조하고
                 PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
                 // 슈팅만 하면 됨
-                bullet.ShottingBullet(bulletSpawnPoint.up * bulletSpeed, transform.position, damage);
+                bullet.ShottingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
+
+                if (IsPlayerWeapon)
+                {
+                    // 총알을 소모하는 함수, 총알 UI 를 갱신하는 함수
+                    gunSpec.CurrentAmmoCountDown();
+                    GameManager.Instance.PlayerStatsUI.SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount);
+                }
 
                 bulletSpawnPoint.Rotate(new Vector3(0, 0, -shootAngle));
             }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 // 플레이어의 UI를 책임지는 클래스
 public class PlayerStatsUI : MonoBehaviour
@@ -9,6 +10,8 @@ public class PlayerStatsUI : MonoBehaviour
 
     [SerializeField] private GameObject hpObject;
     [SerializeField] private Transform hpContain;
+    [SerializeField] private GameObject ammoObject;
+    [SerializeField] private TMP_Text ammoText;
 
     private Player player;
 
@@ -43,4 +46,8 @@ public class PlayerStatsUI : MonoBehaviour
         hpObject.SetActive(true);
     }
 
+    public void SetAmmoTxet(int currentAmmo, int maxAmmo)
+    {
+        ammoText.SetText($"{currentAmmo}/{maxAmmo}");
+    }
 }

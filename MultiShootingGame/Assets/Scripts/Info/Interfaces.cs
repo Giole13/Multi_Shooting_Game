@@ -9,13 +9,11 @@ public interface IDamageable
     public void BeAttacked(int damage);
 }
 
-// 총을 바꿀 수 있는 인터페이스
-public interface IGunChangeable
+// 총을 최초로 획득했을 때 바꿔주는 함수
+public interface IGunFirstAcquisition
 {
-    public void ChangeWeapon(Transform gunTransform);
+    public void FirstAcquisitionChangeWeapon(Transform gunTransform);
 }
-
-
 
 // 총을 구현
 public interface IGun
@@ -27,8 +25,10 @@ public interface IGun
     public void BulletFireStop();
 
     // 총을 획들했을 때 초기화 하는 함수, 사용할 총알의 이름을 매개변수로 받는다.
-    public void Init(string bulletName);
+    public void Init();
+
 }
+
 
 
 

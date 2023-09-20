@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "GunChange",
+                    "type": "Button",
+                    "id": "64235796-0008-4c4d-a94a-af769dcf2670",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -123,11 +132,22 @@
                 {
                     "name": "",
                     "id": "f6d550d7-4084-4665-9d7b-3b993bf568a2",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Keyboard>/#(E)",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "SubSkill",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "181023a0-c3a3-4d6b-a661-b3f956f7d87d",
+                    "path": "<Keyboard>/#(F)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GunChange",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

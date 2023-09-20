@@ -20,3 +20,32 @@ public class Stats
     // 이동속도
     public float Speed;
 }
+
+// 총의 기본 스펙
+public struct GunSpecifications
+{
+    public GunSpecifications(int gunDamage, float bulletSpeed, float firedDelayTime, int maxAmmoCount)
+    {
+        GunDamage = gunDamage;
+        BulletSpeed = bulletSpeed;
+        FiredDelayTime = firedDelayTime;
+        MaxAmmoCount = maxAmmoCount;
+        CurrentAmmoCount = MaxAmmoCount;
+    }
+
+    public int GunDamage { get; private set; }
+    public float BulletSpeed { get; private set; }
+    public float FiredDelayTime { get; private set; }
+
+    // 총의 최대 탄약수
+    public int MaxAmmoCount { get; private set; }
+    // 총의 현재 탄약수
+    public int CurrentAmmoCount { get; private set; }
+
+    // 총의 현재 탄약수를 줄여주는 함수
+    public void CurrentAmmoCountDown()
+    {
+        CurrentAmmoCount--;
+    }
+
+}
