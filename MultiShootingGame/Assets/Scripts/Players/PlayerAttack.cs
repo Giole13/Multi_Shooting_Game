@@ -122,7 +122,10 @@ public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
         // 이후 총의 초기화 함수 호출
         gunTransform.SetParent(playerBaseGun.transform.parent);
 
-        ChangeWeapon();
+        for (int i = 0; i < weaponQueue.Count; i++)
+        {
+            ChangeWeapon();
+        }
     }
 
     // 무기를 획득했을때 실행하는 함수

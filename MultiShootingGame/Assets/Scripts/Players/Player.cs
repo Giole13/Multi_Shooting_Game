@@ -12,7 +12,14 @@ public class Player : MonoBehaviour, IDamageable
 
     private void Awake()
     {
+        Init();
+    }
+
+    // 자식에서 초기화하는 함수
+    protected virtual void Init()
+    {
         stats = new Stats(5, 1, 10f);
+
     }
 
     // 공격을 받는 함수

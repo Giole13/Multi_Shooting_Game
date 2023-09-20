@@ -73,6 +73,7 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
         gameObject.SetActive(true);
         transform.position = pos;
         Init();
+        enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
     }

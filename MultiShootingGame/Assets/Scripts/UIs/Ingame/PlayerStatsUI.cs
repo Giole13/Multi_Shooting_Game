@@ -46,8 +46,15 @@ public class PlayerStatsUI : MonoBehaviour
         hpObject.SetActive(true);
     }
 
-    public void SetAmmoTxet(int currentAmmo, int maxAmmo)
+    public void SetAmmoTxet(int currentAmmo, int maxAmmo, bool isUnlimitedBullets = false)
     {
+        if (isUnlimitedBullets)
+        {
+            ammoText.SetText("∞");
+            ammoText.fontSize = 100f;
+            return;
+        }
         ammoText.SetText($"{currentAmmo}/{maxAmmo}");
+        ammoText.fontSize = 50f;
     }
 }

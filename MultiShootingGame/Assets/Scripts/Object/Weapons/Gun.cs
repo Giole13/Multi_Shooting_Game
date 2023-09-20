@@ -16,7 +16,7 @@ public class Gun : MonoBehaviour, IGun
     protected string useBulletName;
     protected bool IsPlayerWeapon;
 
-    private void Awake()
+    private void Start()
     {
         SettingGun();
     }
@@ -26,6 +26,7 @@ public class Gun : MonoBehaviour, IGun
     {
         if (gunSpec.CurrentAmmoCount <= 0)
         {
+            Debug.Log($"{gunSpec.CurrentAmmoCount} : 총알 다 씀");
             return;
         }
         StartCoroutine(FireGunRoutine());
@@ -51,7 +52,8 @@ public class Gun : MonoBehaviour, IGun
                 }
                 // 총알을 소모하는 함수, 총알 UI 를 갱신하는 함수
                 gunSpec.CurrentAmmoCountDown();
-                GameManager.Instance.PlayerStatsUI.SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount);
+                GameManager.Instance.PlayerStatsUI.
+                    SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
             }
 
             IsFire2 = false;
@@ -70,7 +72,9 @@ public class Gun : MonoBehaviour, IGun
             case "Player":
                 useBulletName = Define.PLAYER_BULLET_NAME;
                 IsPlayerWeapon = true;
-                GameManager.Instance.PlayerStatsUI.SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount);
+                GameManager.Instance.PlayerStatsUI.
+                    SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
+                gunSpec.InitGunDamage(GameManager.Instance.Player.stats.Damage);
                 break;
             case "Enemy":
                 useBulletName = Define.ENEMY_BULLET_NAME;
@@ -86,12 +90,14 @@ public class Gun : MonoBehaviour, IGun
         transform.localPosition = new Vector2(1f, 0f);
         transform.localRotation = Quaternion.Euler(Vector3.zero);
         gunFireDelay = new WaitForSeconds(gunSpec.FiredDelayTime);
+
+
     }
 
     // 각 무기마다 초기 세팅값을 설정
     public virtual void SettingGun()
     {
-        gunSpec = new GunSpecifications(1, 10f, 1f, 10);
+        gunSpec = new GunSpecifications(1, 10f, 1f, 1, true);
     }
 
     // 플레이어와 부딪히면 플레이어의 총을 해당 총으로 바꾼다.
