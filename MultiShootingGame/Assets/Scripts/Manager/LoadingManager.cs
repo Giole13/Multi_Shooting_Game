@@ -35,6 +35,7 @@ public class LoadingManager : Singleton<LoadingManager>
 
         while (true)
         {
+            Debug.Log($"캐릭터 선택씬 로딩 진행도 : {selectCharacterSceneOperation.progress}");
             if (0.89f <= selectCharacterSceneOperation.progress)
             {
                 selectCharacterSceneOperation.priority = 2;
@@ -50,33 +51,13 @@ public class LoadingManager : Singleton<LoadingManager>
 
         while (true)
         {
+            Debug.Log($"인게임 로딩 진행도 : {inGameSceneOperation.progress}");
             if (0.89f <= inGameSceneOperation.progress)
             {
                 // 인게임까지 불러온다면 씬 전환
                 selectCharacterSceneOperation.allowSceneActivation = true;
                 yield break;
             }
-            yield return null;
-        }
-
-        while (true)
-        {
-            // 두 씬 거의 다 불러오면 씬을 전환한다.
-            if (0.89f <= selectCharacterSceneOperation.progress && 0.89f <= inGameSceneOperation.progress)
-            {
-                Debug.Log("모든 씬 불러왔음 !");
-                // 캐릭터 선택 씬으로 넘기고 코루틴 종료
-                selectCharacterSceneOperation.allowSceneActivation = true;
-                yield break;
-            }
-
-            // Debug.Log($"씬 불러오는중 !!");
-            // Debug.Log($"캐릭터 선택 씬 진행도! : {selectCharacterSceneOperation.progress}");
-            // Debug.Log($"캐릭터 선택 씬 완료! : {selectCharacterSceneOperation.isDone}");
-            // Debug.Log($"캐릭터 선택 씬 우선순위! : {selectCharacterSceneOperation.priority}");
-            // Debug.Log($"인게임 씬 진행도! : {inGameSceneOperation.progress}");
-            // Debug.Log($"인게임 씬 완료! : {inGameSceneOperation.isDone}");
-            // Debug.Log($"인게임 씬 우선순위! : {inGameSceneOperation.priority}");
             yield return null;
         }
     }

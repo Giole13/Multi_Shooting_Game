@@ -5,6 +5,9 @@ using UnityEngine;
 // 버튼관련 기능들을 담당하는 클래스
 public class ButtonManager : MonoBehaviour
 {
+    [SerializeField] private PhotonManager photonManager;
+
+    [SerializeField] private Transform matchMakingImage;
 
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
@@ -16,9 +19,13 @@ public class ButtonManager : MonoBehaviour
     public void MultiGameStartBtn()
     {
         // 멀티플레이를 설정하는 함수
-        // 2023.09.14 / HyungJun / 싱글플레이 작업 완료 후 작업
+        photonManager.SettingMultiPlayer();
         GameManager.Instance.MultiPlaySetting();
-        GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
+
+        // 매치메이킹 이미지 켜주기
+        matchMakingImage.gameObject.SetActive(true);
+
+        // GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
     }
 
     // 캐릭터 선택화면에서 게임을 시작하는 함수
