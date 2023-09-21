@@ -9,7 +9,7 @@ public class ButtonManager : MonoBehaviour
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
-        GameManager.Instance.SceneMove(Define.INGAME_SCENE_NAME);
+        GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
     }
 
     // 멀티 플레이 버튼
@@ -17,9 +17,14 @@ public class ButtonManager : MonoBehaviour
     {
         // 멀티플레이를 설정하는 함수
         // 2023.09.14 / HyungJun / 싱글플레이 작업 완료 후 작업
-        // GameManager.instance.MultiPlaySetting();
-        // GameManager.instance.SceneMove(SceneNameDefine.LOADING_SCENE_NAME);
+        GameManager.Instance.MultiPlaySetting();
+        GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
+    }
 
+    // 캐릭터 선택화면에서 게임을 시작하는 함수
+    public void InGameStartBtn()
+    {
+        LoadingManager.Instance.SceneChangeToInGame();
     }
 
     // 설정 버튼

@@ -57,24 +57,21 @@ public class GameManager : Singleton<GameManager>
 
 
 
-    // 게임 시작시 모두 초기화
-    private void Awake()
-    {
-        DontDestroyOnLoad(gameObject);
-    }
+    // 싱글, 멀티 구분 bool 타입
+    public bool IsMultiPlay { get; private set; } = false;
+
+
+
+
 
     //  게임이 끝나고 전부 초기화 해야해주는 함수
     public override void Init()
     {
-        base.Init();
         playerStatsUI = null;
         player = null;
         playerTransform = null;
     }
 
-
-    // 싱글, 멀티 구분 bool 타입
-    public bool IsMultiPlay { get; private set; } = false;
 
     // 멀티 플레이 설정하는 함수
     public void MultiPlaySetting()

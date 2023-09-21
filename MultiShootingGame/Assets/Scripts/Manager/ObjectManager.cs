@@ -10,6 +10,7 @@ public class ObjectManager : MonoBehaviour
     private void Awake()
     {
         GameManager.Instance.Init();
+        LoadingManager.Instance.Init();
     }
 
 

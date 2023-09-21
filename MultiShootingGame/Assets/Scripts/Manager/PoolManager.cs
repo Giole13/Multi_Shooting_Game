@@ -11,7 +11,6 @@ public class PoolManager : Singleton<PoolManager>
     // 딕셔너리에서 바로 접근 후 뽑아 사용하는 형태
     private static Dictionary<string, Stack<GameObject>> objectPool = null;
 
-    private Transform playerTransform;
 
     // 풀링할 프리팹 리스트
     [SerializeField] private List<poolObjectInfo> poolList;
