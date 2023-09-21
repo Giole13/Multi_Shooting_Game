@@ -54,7 +54,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         serverInfoText.text = $"현재 방의 인원 : {room.PlayerCount}";
 
         // 현재 플레이어가 MaxPlayers 면 실행
-        yield return new WaitUntil(() => room.MaxPlayers == room.PlayerCount);
+        // 디버그용 /*room.MaxPlayers*/
+        yield return new WaitUntil(() => /*room.MaxPlayers*/ 1 == room.PlayerCount);
         serverInfoText.text = $"현재 방의 인원 : {room.PlayerCount}";
 
         yield return new WaitForSeconds(1f);
@@ -63,6 +64,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         // 1초후 캐릭터 선택 씬으로 모든 플레이어 전환
         yield return new WaitForSeconds(1f);
         PhotonNetwork.LoadLevel(Define.LOADING_SCENE_NAME);
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
 
