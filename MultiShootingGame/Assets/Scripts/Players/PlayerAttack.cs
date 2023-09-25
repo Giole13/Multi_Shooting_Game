@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 // 플레이어의 공격을 책임지는 클래스
-public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
+public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition
 {
     [SerializeField] private Gun playerBaseGun;
     private IGun playerGun;
@@ -44,6 +45,8 @@ public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
 
     void Update()
     {
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+
         // 플레이어의 바라보는 방향이 0보다 작으면 왼쪽
         float flipX = (playerInputHandler.bulletDir.x <= 0) ? -1f : 1f;
         weaponPointTransform.localScale = new Vector2(flipX, 1f);
@@ -58,6 +61,8 @@ public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
     // 좌클릭 함수
     private void OnAttack()
     {
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+
         // 발사중이 아니면 발사
         if (IsFire == false)
         {
@@ -80,6 +85,8 @@ public class PlayerAttack : MonoBehaviour, IGunFirstAcquisition
     // 스킬을 사용하는 함수
     private void OnSubSkill()
     {
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+
         StartCoroutine(SkillActive());
         IEnumerator SkillActive()
         {

@@ -1,8 +1,9 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // 플레이어의 기본정보 클래스 
-public class Player : MonoBehaviour, IDamageable
+public class Player : MonoBehaviourPun, IDamageable
 {
     public Stats stats;
     public Vector2 bulletDir
@@ -25,6 +26,8 @@ public class Player : MonoBehaviour, IDamageable
     // 공격을 받는 함수
     public virtual void BeAttacked(int damage)
     {
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+
         // 2023.09.20 / HyungJun / 디버그용 주석 - 플레이어 무적
         stats.Health -= damage;
         GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();

@@ -4,6 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PhotonManager : MonoBehaviourPunCallbacks
 {
@@ -11,6 +12,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private ButtonManager buttonManager;
 
+    [SerializeField] private Transform playerCountTransform;
+
+    private int playerCount;
 
     // 서버에 접속하는 함수
     public void SettingMultiPlayer()
@@ -57,22 +61,49 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
         // 현재 플레이어가 MaxPlayers 면 실행
         // 디버그용 /*room.MaxPlayers*/
-        yield return new WaitUntil(() => /*room.MaxPlayers*/ 1 == room.PlayerCount);
+        yield return new WaitUntil(() => room.MaxPlayers == room.PlayerCount);
         serverInfoText.text = $"현재 방의 인원 : {room.PlayerCount}";
 
         yield return new WaitForSeconds(1f);
         serverInfoText.text = $"방에 입장합니다...";
 
+        playerCount = 0;
         yield return new WaitForSeconds(1f);
 
         // 타이틀 화면에서 캐릭터 선택화면으로 바꿔주기만 하기
         buttonManager.SwitchSelectCharacterScreen();
 
-        // PhotonNetwork.LoadLevel(Define.LOADING_SCENE_NAME);
-        // PhotonNetwork.AutomaticallySyncScene = true;
+        photonView.RPC("CountingPlayerNum", RpcTarget.AllBuffered, room.PlayerCount);
     }
 
+    // 플레이어가 몇명 들어왔는지 카운트 해주는 함수
+    [PunRPC]
+    private void CountingPlayerNum(int playerCount)
+    {
+        // 플레이어 표시하는 로직 초기화
+        foreach (Transform obj in playerCountTransform)
+        {
+            obj.gameObject.SetActive(false);
+        }
 
+        // 플레이어 수만큼 표시해주기
+        for (int i = 0; i < playerCount; i++)
+        {
+            playerCountTransform.GetChild(i).gameObject.SetActive(true);
+        }
+    }
 
+    // 멀티 환경으로 게임 시작
+    public void StartInGame()
+    {
+        PhotonNetwork.AutomaticallySyncScene = true;
+        photonView.RPC("SceneMove", RpcTarget.All);
+    }
+
+    [PunRPC]
+    private void SceneMove()
+    {
+        SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+    }
 
 }

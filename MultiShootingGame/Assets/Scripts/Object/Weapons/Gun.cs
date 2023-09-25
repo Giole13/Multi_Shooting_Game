@@ -16,7 +16,7 @@ public class Gun : MonoBehaviour, IGun
     protected string useBulletName;
     protected bool IsPlayerWeapon;
 
-    private void Start()
+    private void OnEnable()
     {
         SettingGun();
     }

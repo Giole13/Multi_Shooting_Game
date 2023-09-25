@@ -54,17 +54,6 @@ public class LoadingManager : Singleton<LoadingManager>
         // 두 씬 모두 준비되면 캐릭터 씬으로 넘기기
         yield return new WaitUntil(() => IsCharacterSceneLoaded && IsIngameLoaded);
         selectCharacterSceneOperation.allowSceneActivation = true;
-
-
-        // while (true)
-        // {
-        //     if (0.89f <= selectCharacterSceneOperation.progress)
-        //     {
-        //         // selectCharacterSceneOperation.priority = 2;
-        //         break;
-        //     }
-        //     yield return null;
-        // }
     }
 
     // 인게임 씬을 불러우는 코루틴
@@ -79,29 +68,20 @@ public class LoadingManager : Singleton<LoadingManager>
         Debug.Log($"인게임 로딩 진행도 : {inGameSceneOperation.progress}");
 
         IsIngameLoaded = true;
-
-        // 캐릭터 씬으로 씬 전환
-        // selectCharacterSceneOperation.allowSceneActivation = true;
-
-        // while (true)
-        // {
-        //     if (0.89f <= inGameSceneOperation.progress)
-        //     {
-        //         // 인게임까지 불러온다면 씬 전환
-        //         selectCharacterSceneOperation.allowSceneActivation = true;
-        //         yield break;
-        //     }
-        //     yield return null;
-        // }
     }
 
-    // 인게임 씬으로 넘겨주는 함수
+    // 인게임 씬으로 넘겨주는 함수 -> 캐릭터 선택 장면에서 준비 버튼을 클릭시 실행하는 함수
     public void SceneChangeToInGame()
     {
-        SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
-        // Debug.Log("클릭!");
-        // // selectCharacterSceneOperation.priority = 1;
-        // // inGameSceneOperation.priority = 2;
-        // inGameSceneOperation.allowSceneActivation = true;
+        // 싱글플레이일 경우 실행하는 로직
+        if (GameManager.Instance.IsMultiPlay == false)
+        {
+            SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+            return;
+        }
+
+        // 멀티플레이일 경우
+
+
     }
 }

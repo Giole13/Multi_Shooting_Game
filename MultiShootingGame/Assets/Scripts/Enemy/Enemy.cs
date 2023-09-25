@@ -43,13 +43,13 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
         IsPoolInsert = true;
     }
 
-
     private void FixedUpdate()
     {
         // 플레이어 방향으로 움직임 계산
         Vector2 lookingVector = (playerTransform.position - transform.position).normalized * Time.fixedDeltaTime;
         enemyRigid.MovePosition(enemyRigid.position + lookingVector * stats.Speed);
     }
+
 
     private void Update()
     {
@@ -79,7 +79,7 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
     }
 
 
-    // 몬스터가 사라지면 풀에 다시 넣고 스포너의 카운터 --
+    // 몬스터가 사라지면 풀에 다시 넣고 스포너의 카운터
     private void OnDisable()
     {
         if (IsPoolInsert)
