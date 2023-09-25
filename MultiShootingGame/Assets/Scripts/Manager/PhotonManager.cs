@@ -96,6 +96,9 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     // 멀티 환경으로 게임 시작
     public void StartInGame()
     {
+        // 초당 동기화 함수 호출 수 설정
+        PhotonNetwork.SendRate = 60;
+
         PhotonNetwork.AutomaticallySyncScene = true;
         photonView.RPC("SceneMove", RpcTarget.All);
     }

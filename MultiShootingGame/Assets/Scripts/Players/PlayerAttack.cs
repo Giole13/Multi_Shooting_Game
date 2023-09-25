@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 // 플레이어의 공격을 책임지는 클래스
-public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition/*, IPunObservable*/
+public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservable
 {
     [SerializeField] private Gun playerBaseGun;
 
@@ -18,6 +18,9 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition/*, IPunObserv
 
     [SerializeField] private Transform weaponPointTransform;
     [SerializeField] private Transform playerSkillTransform;
+
+    private Quaternion networkRotation;
+
     public Vector2 bulletDir
     {
         get; private set;
@@ -43,9 +46,18 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition/*, IPunObserv
         playerSkillTransform.gameObject.SetActive(false);
     }
 
-    void Update()
+    private void FixedUpdate()
     {
-        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+        // 자신이 아닌 객체라면
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay)
+        {
+            weaponPointTransform.rotation = Quaternion.RotateTowards(weaponPointTransform.rotation,
+                                                    networkRotation, 1000f);
+
+            // weaponPointTransform.rotation = Quaternion.Lerp(weaponPointTransform.rotation,
+            //                                              networkRotation, 10 * Time.fixedDeltaTime);
+            return;
+        }
 
         // 플레이어의 바라보는 방향이 0보다 작으면 왼쪽
         float flipX = (playerInputHandler.bulletDir.x <= 0) ? -1f : 1f;
@@ -167,18 +179,18 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition/*, IPunObserv
         playerGun.Init();
     }
 
-    // public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    // {
-    //     if (stream.IsWriting)
-    //     {
-    //         stream.SendNext(weaponPointTransform.rotation.eulerAngles.z);
-    //         stream.SendNext(weaponPointTransform.localScale.x);
-    //     }
-    //     else
-    //     {
-    //         weaponPointTransform.rotation = Quaternion.Euler(0f, 0f, (float)stream.ReceiveNext());
-    //         weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
-    //     }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(weaponPointTransform.rotation);
+            stream.SendNext(weaponPointTransform.localScale.x);
+        }
+        else
+        {
 
-    // }
+            networkRotation = (Quaternion)stream.ReceiveNext();
+            weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
+        }
+    }
 }
