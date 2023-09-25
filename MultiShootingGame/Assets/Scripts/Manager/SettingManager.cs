@@ -29,7 +29,7 @@ public class SettingManager : MonoBehaviour
 
 
         // 전체화면 FHD 해상도 설정
-        Screen.SetResolution(1920, 1080, FullScreenMode.FullScreenWindow);
+        Screen.SetResolution(1280, 720, FullScreenMode.Windowed);
     }
 
 

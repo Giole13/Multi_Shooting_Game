@@ -29,12 +29,12 @@ public class Player : MonoBehaviourPun, IDamageable
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
 
         // 2023.09.20 / HyungJun / 디버그용 주석 - 플레이어 무적
-        stats.Health -= damage;
-        GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
-        if (stats.Health <= 0)
-        {
-            GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
-        }
+        // stats.Health -= damage;
+        // GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
+        // if (stats.Health <= 0)
+        // {
+        //     GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
+        // }
     }
 
 

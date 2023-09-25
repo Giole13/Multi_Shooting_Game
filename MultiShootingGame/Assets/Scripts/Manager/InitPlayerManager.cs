@@ -13,13 +13,13 @@ public class InitPlayerManager : MonoBehaviourPun
         // 싱글플레이일 경우 플레이어 스폰후 리턴
         if (GameManager.Instance.IsMultiPlay == false)
         {
-            Instantiate(Player);
+            GameObject obj = Instantiate(Player);
+            obj.GetComponent<PhotonRigidbody2DView>().enabled = false;
+            obj.GetComponent<PhotonTransformView>().enabled = false;
             return;
         }
 
         // 플레이어 생성
-        GameObject obj = PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
-        obj.GetComponent<PhotonRigidbody2DView>().enabled = true;
-        obj.GetComponent<PhotonTransformView>().enabled = true;
+        PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
     }
 }

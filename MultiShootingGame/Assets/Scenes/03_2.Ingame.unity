@@ -300,7 +300,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &119133437
 Transform:
   m_ObjectHideFlags: 0
@@ -2166,6 +2166,10 @@ PrefabInstance:
     - target: {fileID: 6318121992185916165, guid: 6ef4b80daa812014b923c7fc551cf72b, type: 3}
       propertyPath: m_Name
       value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 6318121992185916165, guid: 6ef4b80daa812014b923c7fc551cf72b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6815083847550391826, guid: 6ef4b80daa812014b923c7fc551cf72b, type: 3}
       propertyPath: m_LocalPosition.x

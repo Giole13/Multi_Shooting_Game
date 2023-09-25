@@ -106,4 +106,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
     }
 
+    // 게임이 끝나면 서버를 나가는 함수 
+    public void LeaveServer()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
+    }
 }
