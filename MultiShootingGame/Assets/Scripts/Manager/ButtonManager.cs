@@ -8,11 +8,28 @@ public class ButtonManager : MonoBehaviour
     [SerializeField] private PhotonManager photonManager;
 
     [SerializeField] private Transform matchMakingImage;
+    [SerializeField] private Transform[] selectCharacter;
+
+    [SerializeField] private Transform titleTransform;
+
+
+    // 캐릭터 선택화면으로 바꿔주는 함수
+    public void SwitchSelectCharacterScreen()
+    {
+        titleTransform.gameObject.SetActive(false);
+
+        foreach (var obj in selectCharacter)
+        {
+            obj.gameObject.SetActive(true);
+        }
+    }
 
     // 싱글 플레이 버튼
     public void SingleGameStartBtn()
     {
-        GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
+        // GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
+
+        SwitchSelectCharacterScreen();
     }
 
     // 멀티 플레이 버튼
@@ -50,6 +67,5 @@ public class ButtonManager : MonoBehaviour
     public void BackToTitle()
     {
         GameManager.Instance.SceneMove(Define.TITLE_SCENE_NAME);
-
     }
 }

@@ -9,6 +9,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_Text serverInfoText;
 
+    [SerializeField] private ButtonManager buttonManager;
+
 
     // 서버에 접속하는 함수
     public void SettingMultiPlayer()
@@ -61,10 +63,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1f);
         serverInfoText.text = $"방에 입장합니다...";
 
-        // 1초후 캐릭터 선택 씬으로 모든 플레이어 전환
         yield return new WaitForSeconds(1f);
-        PhotonNetwork.LoadLevel(Define.LOADING_SCENE_NAME);
-        PhotonNetwork.AutomaticallySyncScene = true;
+
+        // 타이틀 화면에서 캐릭터 선택화면으로 바꿔주기만 하기
+        buttonManager.SwitchSelectCharacterScreen();
+
+        // PhotonNetwork.LoadLevel(Define.LOADING_SCENE_NAME);
+        // PhotonNetwork.AutomaticallySyncScene = true;
     }
 
 

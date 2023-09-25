@@ -98,9 +98,10 @@ public class LoadingManager : Singleton<LoadingManager>
     // 인게임 씬으로 넘겨주는 함수
     public void SceneChangeToInGame()
     {
-        Debug.Log("클릭!");
-        // selectCharacterSceneOperation.priority = 1;
-        // inGameSceneOperation.priority = 2;
-        inGameSceneOperation.allowSceneActivation = true;
+        SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+        // Debug.Log("클릭!");
+        // // selectCharacterSceneOperation.priority = 1;
+        // // inGameSceneOperation.priority = 2;
+        // inGameSceneOperation.allowSceneActivation = true;
     }
 }

@@ -5,14 +5,14 @@ using UnityEngine;
 // 각종 설정들을 초기화 해주는 클래스
 public class SettingManager : MonoBehaviour
 {
-    [SerializeField] private List<Transform> initTransformList;
+    [SerializeField] private List<Transform> initTransformListToAtiveFalse;
 
 
     // 게임 시작시 기본 세팅 초기화
     void Start()
     {
         // 처음에 꺼두어야 하는 오브젝트를 전부 꺼주기
-        foreach (Transform offTransform in initTransformList)
+        foreach (Transform offTransform in initTransformListToAtiveFalse)
         {
             offTransform.gameObject.SetActive(false);
         }
