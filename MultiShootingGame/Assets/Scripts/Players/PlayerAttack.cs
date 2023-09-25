@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 
 // 플레이어의 공격을 책임지는 클래스
-public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservable
+public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition/*, IPunObservable*/
 {
     [SerializeField] private Gun playerBaseGun;
 
@@ -167,131 +167,18 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         playerGun.Init();
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting)
-        {
-            stream.SendNext(weaponPointTransform.rotation.eulerAngles.z);
-            stream.SendNext(weaponPointTransform.localScale.x);
-        }
-        else
-        {
-            weaponPointTransform.rotation = Quaternion.Euler(0f, 0f, (float)stream.ReceiveNext());
-            weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
-        }
+    // public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    // {
+    //     if (stream.IsWriting)
+    //     {
+    //         stream.SendNext(weaponPointTransform.rotation.eulerAngles.z);
+    //         stream.SendNext(weaponPointTransform.localScale.x);
+    //     }
+    //     else
+    //     {
+    //         weaponPointTransform.rotation = Quaternion.Euler(0f, 0f, (float)stream.ReceiveNext());
+    //         weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
+    //     }
 
-        // var tr = transform;
-
-        // // Write
-        // if (stream.IsWriting)
-        // {
-        //     if (this.m_SynchronizePosition)
-        //     {
-        //         if (m_UseLocal)
-        //         {
-        //             this.m_Direction = tr.localPosition - this.m_StoredPosition;
-        //             this.m_StoredPosition = tr.localPosition;
-        //             stream.SendNext(tr.localPosition);
-        //             stream.SendNext(this.m_Direction);
-        //         }
-        //         else
-        //         {
-        //             this.m_Direction = tr.position - this.m_StoredPosition;
-        //             this.m_StoredPosition = tr.position;
-        //             stream.SendNext(tr.position);
-        //             stream.SendNext(this.m_Direction);
-        //         }
-        //     }
-
-        //     if (this.m_SynchronizeRotation)
-        //     {
-        //         if (m_UseLocal)
-        //         {
-        //             stream.SendNext(tr.localRotation);
-        //         }
-        //         else
-        //         {
-        //             stream.SendNext(tr.rotation);
-        //         }
-        //     }
-
-        //     if (this.m_SynchronizeScale)
-        //     {
-        //         stream.SendNext(tr.localScale);
-        //     }
-        // }
-        // // Read
-        // else
-        // {
-        //     if (this.m_SynchronizePosition)
-        //     {
-        //         this.m_NetworkPosition = (Vector3)stream.ReceiveNext();
-        //         this.m_Direction = (Vector3)stream.ReceiveNext();
-
-        //         if (m_firstTake)
-        //         {
-        //             if (m_UseLocal)
-        //                 tr.localPosition = this.m_NetworkPosition;
-        //             else
-        //                 tr.position = this.m_NetworkPosition;
-
-        //             this.m_Distance = 0f;
-        //         }
-        //         else
-        //         {
-        //             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
-        //             this.m_NetworkPosition += this.m_Direction * lag;
-        //             if (m_UseLocal)
-        //             {
-        //                 this.m_Distance = Vector3.Distance(tr.localPosition, this.m_NetworkPosition);
-        //             }
-        //             else
-        //             {
-        //                 this.m_Distance = Vector3.Distance(tr.position, this.m_NetworkPosition);
-        //             }
-        //         }
-
-        //     }
-
-        //     if (this.m_SynchronizeRotation)
-        //     {
-        //         this.m_NetworkRotation = (Quaternion)stream.ReceiveNext();
-
-        //         if (m_firstTake)
-        //         {
-        //             this.m_Angle = 0f;
-
-        //             if (m_UseLocal)
-        //             {
-        //                 tr.localRotation = this.m_NetworkRotation;
-        //             }
-        //             else
-        //             {
-        //                 tr.rotation = this.m_NetworkRotation;
-        //             }
-        //         }
-        //         else
-        //         {
-        //             if (m_UseLocal)
-        //             {
-        //                 this.m_Angle = Quaternion.Angle(tr.localRotation, this.m_NetworkRotation);
-        //             }
-        //             else
-        //             {
-        //                 this.m_Angle = Quaternion.Angle(tr.rotation, this.m_NetworkRotation);
-        //             }
-        //         }
-        //     }
-
-        //     if (this.m_SynchronizeScale)
-        //     {
-        //         tr.localScale = (Vector3)stream.ReceiveNext();
-        //     }
-
-        //     if (m_firstTake)
-        //     {
-        //         m_firstTake = false;
-        //     }
-        // }
-    }
+    // }
 }
