@@ -14,7 +14,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private Transform playerCountTransform;
 
-    private int playerCount;
 
     // 서버에 접속하는 함수
     public void SettingMultiPlayer()
@@ -67,7 +66,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(1f);
         serverInfoText.text = $"방에 입장합니다...";
 
-        playerCount = 0;
         yield return new WaitForSeconds(1f);
 
         // 타이틀 화면에서 캐릭터 선택화면으로 바꿔주기만 하기

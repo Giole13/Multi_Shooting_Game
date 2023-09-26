@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+
 
 // 총 배이스
 public class Gun : MonoBehaviour, IGun
@@ -16,9 +18,20 @@ public class Gun : MonoBehaviour, IGun
     protected string useBulletName;
     protected bool IsPlayerWeapon;
 
-    private void OnEnable()
+
+    // 멀티 : 로컬인지 확인하는 함수
+    protected bool IsLocalItem;
+
+
+    private void Awake()
     {
         SettingGun();
+    }
+
+    // 각 무기마다 초기 세팅값을 설정
+    public virtual void SettingGun()
+    {
+        gunSpec = new GunSpecifications(1, 10f, 1f, 10, true);
     }
 
     // 기본 공격 함수, 공격중일 경우 계속 공격
@@ -26,40 +39,9 @@ public class Gun : MonoBehaviour, IGun
     {
         if (gunSpec.CurrentAmmoCount <= 0)
         {
-            Debug.Log($"{gunSpec.CurrentAmmoCount} : 총알 다 씀");
             return;
         }
         StartCoroutine(FireGunRoutine());
-    }
-
-    // 기본 총의 공격 로직
-    protected virtual IEnumerator FireGunRoutine()
-    {
-        yield return null;
-        IsFire = true;
-        while (IsFire && IsFire2)
-        {
-            // 풀매니저에서 총알을 참조하고
-            PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
-            // 슈팅만 하면 됨
-            bullet.ShottingBullet(transform.right * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
-
-            if (IsPlayerWeapon)
-            {
-                if (gunSpec.CurrentAmmoCount <= 0)
-                {
-                    yield break;
-                }
-                // 총알을 소모하는 함수, 총알 UI 를 갱신하는 함수
-                gunSpec.CurrentAmmoCountDown();
-                GameManager.Instance.PlayerStatsUI.
-                    SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
-            }
-
-            IsFire2 = false;
-            yield return gunFireDelay;
-            IsFire2 = true;
-        }
     }
 
     // 상위 객체로 들어온 후 실행
@@ -72,8 +54,6 @@ public class Gun : MonoBehaviour, IGun
             case "Player":
                 useBulletName = Define.PLAYER_BULLET_NAME;
                 IsPlayerWeapon = true;
-                GameManager.Instance.PlayerStatsUI.
-                    SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
                 gunSpec.InitGunDamage(GameManager.Instance.Player.stats.Damage);
                 break;
             case "Enemy":
@@ -91,14 +71,48 @@ public class Gun : MonoBehaviour, IGun
         transform.localRotation = Quaternion.Euler(Vector3.zero);
         gunFireDelay = new WaitForSeconds(gunSpec.FiredDelayTime);
 
-
+        // 싱글, 멀티에서 자기 자신은 로컬로 판정
+        IsLocalItem = true;
     }
 
-    // 각 무기마다 초기 세팅값을 설정
-    public virtual void SettingGun()
+    // 로컬 객체가 아니게 해주는 함수
+    public void MakeItNonLocal()
     {
-        gunSpec = new GunSpecifications(1, 10f, 1f, 1, true);
+        IsLocalItem = false;
     }
+
+    // 기본 총의 공격 로직
+    protected virtual IEnumerator FireGunRoutine()
+    {
+        yield return null;
+        IsFire = true;
+        while (IsFire && IsFire2)
+        {
+            // 풀매니저에서 총알을 참조하고
+            PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
+            // 슈팅만 하면 됨
+            bullet.ShottingBullet(transform.right * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
+
+            // 플레이어가 가지고 있는 총이라면
+            if (IsPlayerWeapon)
+            {
+                if (gunSpec.CurrentAmmoCount <= 0)
+                {
+                    yield break;
+                }
+
+                // 총알을 소모하는 함수
+                gunSpec.CurrentAmmoCountDown();
+
+                RenewalAmmoUI();
+            }
+
+            IsFire2 = false;
+            yield return gunFireDelay;
+            IsFire2 = true;
+        }
+    }
+
 
     // 플레이어와 부딪히면 플레이어의 총을 해당 총으로 바꾼다.
     private void OnTriggerEnter2D(Collider2D other)
@@ -115,4 +129,15 @@ public class Gun : MonoBehaviour, IGun
         IsFire = false;
     }
 
+    // 총알 UI 갱신하는 함수
+    public void RenewalAmmoUI()
+    {
+        // 로컬에서만 실행해야 하는 함수
+        if (IsLocalItem)
+        {
+            // 총알 UI 를 갱신하는 함수
+            GameManager.Instance.PlayerStatsUI.
+                SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
+        }
+    }
 }

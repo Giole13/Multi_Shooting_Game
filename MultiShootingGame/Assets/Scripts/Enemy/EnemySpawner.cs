@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -10,20 +11,20 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private List<Transform> spawnPoint;
     [SerializeField] private Transform bossTransform;
 
-    [SerializeField] private int maxSpawnCount = 5;
-    [ReadOnly] private int currentSpawnCount;
+    [ReadOnly] private int maxSpawnCount = 5;
 
-    public EnemySpawner()
-    {
-        currentSpawnCount = 0;
-    }
+    [ReadOnly] private int currentSpawnCount;
 
     private void Awake()
     {
-        // 몬스터 스폰 켜주기
-        StartCoroutine(EnemyCreate());
-        // 보스는 꺼두기
-        bossTransform.gameObject.SetActive(false);
+        // 마스터 클라이언트에서 처리해주기
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // 몬스터 스폰 켜주기
+            StartCoroutine(EnemyCreate());
+            // 보스는 꺼두기
+            bossTransform.gameObject.SetActive(false);
+        }
     }
 
 
@@ -45,7 +46,6 @@ public class EnemySpawner : MonoBehaviour
             PoolManager.Instance.PullItObject("Enemy").GetComponent<ISetPosition>().SetPosition(spawnPoint[randomIndex].position);
             currentSpawnCount++;
         }
-
     }
 
 }

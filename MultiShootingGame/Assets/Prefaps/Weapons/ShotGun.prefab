@@ -147,10 +147,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 579df4ca477fca54b907aff9a69300ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 0
-  GunDamage: 0
-  bulletSpeed: 0
-  FiredDelayTime: 0
   bulletSpawnPoint: {fileID: 3579291884507231535}
 --- !u!1 &9012122883416726811
 GameObject:

@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 // 플레이어의 기본정보 클래스 
 public class Player : MonoBehaviourPun, IDamageable
 {
+    // 자신을 나타내는 삼각형
+    [SerializeField] protected Transform selfIndication;
+
     public Stats stats;
     public Vector2 bulletDir
     {
@@ -14,6 +17,13 @@ public class Player : MonoBehaviourPun, IDamageable
     private void Awake()
     {
         Init();
+        selfIndication.gameObject.SetActive(false);
+
+        // 자기 자신이라면 자신을 표시하는 삼각형 켜주기
+        if (photonView.IsMine)
+        {
+            selfIndication.gameObject.SetActive(true);
+        }
     }
 
     // 자식에서 초기화하는 함수

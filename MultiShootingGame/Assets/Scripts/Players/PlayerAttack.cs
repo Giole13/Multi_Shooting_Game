@@ -44,6 +44,16 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         IsSkillActive = false;
 
         playerSkillTransform.gameObject.SetActive(false);
+
+        // 자신이 아닌 객체라면
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay)
+        {
+            playerBaseGun.MakeItNonLocal();
+            return;
+        }
+
+        // 로컬의 총 UI 갱신
+        playerBaseGun.RenewalAmmoUI();
     }
 
     private void FixedUpdate()
@@ -54,7 +64,6 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
             // 지연보상으로 현재 거리와 동기화 된 거리를 보간한다.
             weaponPointTransform.rotation = Quaternion.RotateTowards(weaponPointTransform.rotation,
                                                     networkRotation, 1000f);
-
             return;
         }
 
@@ -71,9 +80,10 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
     // 좌클릭 함수
     private void OnAttack()
     {
+        // 자신이 아닌 객체는 리턴
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
 
-        // 멀티플레이인 경우
+        // 자신의 멀티플레이인 경우
         if (GameManager.Instance.IsMultiPlay)
         {
             photonView.RPC("FireBullet", RpcTarget.All);
@@ -102,7 +112,6 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
             return;
         }
     }
-
 
     private bool IsSkillActive;
 
@@ -143,13 +152,19 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
     // 가지고 있는 총을 스왑하는 함수
     private void OnGunChange()
     {
+        // 멀티플레이인 경우
+        if (GameManager.Instance.IsMultiPlay)
+        {
+            photonView.RPC("ChangeWeapon", RpcTarget.All);
+            return;
+        }
+
         ChangeWeapon();
     }
 
     // 총을 최초로 획득하면 해당 총으로 바꾸고 값을 초기화한다.
     public void FirstAcquisitionChangeWeapon(Transform gunTransform)
     {
-
         weaponQueue.Enqueue(gunTransform);
 
         // 가지고 있는 총의 상위 객체로 위치를 옮긴다.
@@ -163,6 +178,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
     }
 
     // 무기를 획득했을때 실행하는 함수
+    [PunRPC]
     private void ChangeWeapon()
     {
         playerBaseGun.enabled = false;
@@ -176,6 +192,16 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         playerBaseGun.gameObject.SetActive(true);
 
         playerGun.Init();
+
+        // 자신이 아닌 객체라면
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay)
+        {
+            playerBaseGun.MakeItNonLocal();
+            return;
+        }
+
+        // 로컬인 경우 UI 갱신
+        playerBaseGun.RenewalAmmoUI();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

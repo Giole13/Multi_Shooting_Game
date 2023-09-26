@@ -40,11 +40,19 @@ public class ShotGun : Gun
                 // 슈팅만 하면 됨
                 bullet.ShottingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
 
+                // 플레이어가 가지고 있는 총이라면
                 if (IsPlayerWeapon)
                 {
-                    // 총알을 소모하는 함수, 총알 UI 를 갱신하는 함수
+                    if (gunSpec.CurrentAmmoCount <= 0)
+                    {
+                        yield break;
+                    }
+
+                    // 총알을 소모하는 함수
                     gunSpec.CurrentAmmoCountDown();
-                    GameManager.Instance.PlayerStatsUI.SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount);
+
+                    // 로컬 UI 갱신 
+                    RenewalAmmoUI();
                 }
 
                 bulletSpawnPoint.Rotate(new Vector3(0, 0, -shootAngle));
