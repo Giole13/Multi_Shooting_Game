@@ -6,6 +6,7 @@
 - https://resourcebank.or.kr/?menucode=30100&tmenu=graphics&mode=&catemenug=111&orderby=&s_type=&s_key=%ED%94%BD%EC%85%80
 - https://opengameart.org/
 - https://assetstore.unity.com/?category=2d%2Fcharacters&free=true&orderBy=1&page=3
+- https://craftpix.net/download/51577/
 
 # Information
 
@@ -188,7 +189,8 @@
     - 비동기로 씬 2개를 동시에 불러와 작업하는 로직 추가
   - 멀티 구현중
 
-- 2023.09.25
+- 2023.09.26
+
   - 캐릭터 선택 씬을 타이틀 화면에서 선택하는 방식으로 변경
   - 로딩은 인게임만 하는 것을것으로 변경
   - 각자의 탄창을 인식하고 따로따로 나누기
@@ -196,3 +198,14 @@
   - 로컬에서의 총의 UI 갱신 추가
   - 멀티에서 자신을 나타내는 식별 삼각형 추가
   - 몬스터 생성 -> 마스터에서 관리 및 게스트 동기화
+  - 모든 몬스터에 PhotonView 추가 -> 동기화
+  - 맵 확장
+  - 엔딩에서 서버를 나가고 다시 게임에 접속할수 있게 변경
+
+- 2023.09.27
+  - 버그 : 게스트에서 몬스터가 비활성화 되야하는데 필드에 그대로 나옴
+    - 몬스터에서 아무런 필터없이 SetActive(false)를 해주어서 그랬음 -> Check
+  - 뷰 아이디의 값이 0이면 RPC를 사용하지 못한다.
+    - 뷰 아이디 값이 0이 아니게 만들어야 한다.
+  - 멀티 : 적의 경우 커스텀 프로퍼티에 플레이어를 전부 집어 넣고 하나씩 꺼내와서 직접 거리를 비교해서 가장 가까운 플레이어를 추적하게 만든다
+  - 싱글 : GameManager.Instanse.PlayerTransform으로 직접 참조하여 타켓팅한다.

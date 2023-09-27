@@ -30,6 +30,8 @@ public class ButtonManager : MonoBehaviour
     public void SingleGameStartBtn()
     {
         // GameManager.Instance.SceneMove(Define.LOADING_SCENE_NAME);
+        // 멀티 플레이 세팅 false
+        GameManager.Instance.SettingMultiPlay(false);
 
         SwitchSelectCharacterScreen();
     }
@@ -38,8 +40,9 @@ public class ButtonManager : MonoBehaviour
     public void MultiGameStartBtn()
     {
         // 멀티플레이를 설정하는 함수
+        // 멀티 플레이 세팅 true
         photonManager.SettingMultiPlayer();
-        GameManager.Instance.MultiPlaySetting();
+        GameManager.Instance.SettingMultiPlay(true);
 
         // 매치메이킹 이미지 켜주기
         matchMakingImage.gameObject.SetActive(true);

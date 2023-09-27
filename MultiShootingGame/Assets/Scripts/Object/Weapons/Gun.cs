@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
 
 
 // 총 배이스
@@ -28,10 +27,16 @@ public class Gun : MonoBehaviour, IGun
         SettingGun();
     }
 
+    private void Start()
+    {
+
+    }
+
     // 각 무기마다 초기 세팅값을 설정
     public virtual void SettingGun()
     {
         gunSpec = new GunSpecifications(1, 10f, 1f, 10, true);
+        gameObject.SetActive(true);
     }
 
     // 기본 공격 함수, 공격중일 경우 계속 공격
@@ -41,6 +46,7 @@ public class Gun : MonoBehaviour, IGun
         {
             return;
         }
+
         StartCoroutine(FireGunRoutine());
     }
 

@@ -43,6 +43,10 @@ MonoBehaviour:
   - SceneMove
   - FireBullet
   - ChangeWeapon
+  - SpawnBoss
+  - SpawnEnemy
+  - FireBulletRPC
+  - SetEnemySpawn
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

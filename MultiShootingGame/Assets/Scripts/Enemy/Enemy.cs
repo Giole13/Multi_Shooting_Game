@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour, ISetPosition, IDamageable
+public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
 {
     [SerializeField] protected Gun enemyGun;
 
@@ -19,21 +20,31 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 
 
     // 넉백의 지속 시간
-    private WaitForSeconds KnockbackTime = new WaitForSeconds(0.3f);
+    protected WaitForSeconds KnockbackTime = new WaitForSeconds(0.3f);
 
 
-    private Transform playerTransform;
+    private Transform targetTransform;
     private Rigidbody2D enemyRigid;
 
 
     // 풀에 다시 넣을건지를 판단하는 bool
-    private bool IsPoolInsert = false;
+    protected bool IsPoolInsert = false;
+
+    // 공격을 할 수 있게 허락하는 변수
+    private bool IsAttack;
 
     private void Start()
     {
         enemyRigid = GetComponent<Rigidbody2D>();
-        playerTransform = GameManager.Instance.PlayerTransform;
+        // targetTransform = GameManager.Instance.PlayerTransform;
         Init();
+        IsAttack = false;
+
+        // 멀티 : 자신이 마스터에서 관리하는 객체가 아닐 경우
+        if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     // 상속받은 곳에서 사용할 것
@@ -45,16 +56,26 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
 
     private void FixedUpdate()
     {
-        // 플레이어 방향으로 움직임 계산
-        Vector2 lookingVector = (playerTransform.position - transform.position).normalized * Time.fixedDeltaTime;
+        if (PhotonNetwork.IsMasterClient == false && GameManager.Instance.IsMultiPlay)
+        {
+            return;
+        }
+
+        // 목표 방향으로 움직임 계산
+        Vector2 lookingVector = (targetTransform.position - transform.position).normalized * Time.fixedDeltaTime;
         enemyRigid.MovePosition(enemyRigid.position + lookingVector * stats.Speed);
     }
 
-
     private void Update()
     {
+        // 마스터만 접근 가능함
+        if (PhotonNetwork.IsMasterClient == false && GameManager.Instance.IsMultiPlay)
+        {
+            return;
+        }
+
         // 총알 위치는 플레이어 방향
-        Vector2 gunDir = (playerTransform.position - transform.position).normalized;
+        Vector2 gunDir = (targetTransform.position - transform.position).normalized;
 
         // 총알이 왼쪽으로 넘어가면 왼쪽으로 뒤집어 주기
         float flipX = (gunDir.x <= 0) ? -1f : 1f;
@@ -67,35 +88,137 @@ public class Enemy : MonoBehaviour, ISetPosition, IDamageable
     }
 
 
-    // 몬스터가 소환되는 함수, 몬스터의 스펙을 초기화 하는 함수, 총으로 공격함수도 실행
+    // 멀티 : 호스트 실행 - 몬스터가 소환되는 함수, 몬스터의 스펙을 초기화 하는 함수, 총으로 공격함수도 실행
     public void SetPosition(Vector2 pos)
     {
+        int viewID = 0;
+
+        // 싱글 : 로컬일 경우
+        if (GameManager.Instance.IsMultiPlay == false)
+        {
+            // 플레이어가 한명이라서 바로 참조 가능
+            targetTransform = GameManager.Instance.PlayerTransform;
+            SetEnemySpawn(pos, viewID);
+            return;
+        }
+
+        // 멀티 : 마스터일 경우 
+        if (PhotonNetwork.IsMasterClient && GameManager.Instance.IsMultiPlay)
+        {
+            // 호스트에서 몬스터가 추적할 플레이어를 연산 한다.
+            viewID = SearchingTargetObject();
+            photonView.RPC("SetEnemySpawn", RpcTarget.All, pos, viewID);
+            return;
+        }
+    }
+
+    [PunRPC]
+    public void SetEnemySpawn(Vector2 position, int viewID)
+    {
         gameObject.SetActive(true);
-        transform.position = pos;
+        transform.position = position;
         Init();
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
-    }
 
-
-    // 몬스터가 사라지면 풀에 다시 넣고 스포너의 카운터
-    private void OnDisable()
-    {
-        if (IsPoolInsert)
+        // 멀티플레이인 경우 viewID 를 받아와서 룸 커스텀 프로퍼티로 찾아 객체를 참조한다.
+        if (GameManager.Instance.IsMultiPlay)
         {
-            IsPoolInsert = false;
-            PoolManager.Instance.InsertObject("Enemy", gameObject);
+            // 룸 커스텀 프로퍼티의 key값을 viewID로 넣어 value값을 추적할 타켓으로 정한다.
+            // 2023.09.27 / HyungJun / 여기서 커스텀 프로퍼티를 사용해 ViewID값으로 플레이어 객체를 가져와서 적용시킨다.
+
         }
     }
 
+    // 추적할 오브젝트를 찾는 함수 - 원을 그려 플레이어를 탐색한다.
+    private int SearchingTargetObject()
+    {
+        #region 레거시 코드
+        // // 식별할 레이어 마스크의 넘버 (2진수 형태가 아님)
+        // LayerMask playerLayer = LayerMask.NameToLayer("Player");
+        // // 2D 콜라이더에서 IsTrigger가 활성화 된 객체도 충돌을 허락하는 프로퍼티
+        // Physics2D.queriesHitTriggers = true;
+
+        // Collider2D[] targettargetCollider2dArray = new Collider2D[0];
+
+        // // 1초 간격으로 플레이어를 계속 탐색
+        // WaitForSeconds searchCycleTime = new WaitForSeconds(1f);
+
+        // StartCoroutine(SearchCoroutine());
+        // IEnumerator SearchCoroutine()
+        // {
+        //     while (true)
+        //     {
+        //         // 플레이어 레이어 만큼 2진수를 왼쪽으로 이동시키고 해당 레이어를 식별한다. -> 충돌된 객체들을 배열 형태로 반환
+        //         targettargetCollider2dArray = Physics2D.OverlapCircleAll(transform.position, 10f, 1 << playerLayer);
+
+        //         // 객체가 널이 아니게 되면
+        //         if (targettargetCollider2dArray[0] != null)
+        //         {
+        //             break;
+        //         }
+
+        //         yield return searchCycleTime;
+        //     }
+
+        // }
+
+        // // 비교할 거리를 담는 변수
+        // float compareDistancefloat = float.MaxValue;
+
+        // // 자신 (적)의 위치와 타켓의 위치를 비교하여 더 짧은 거리의 객체를 타겟으로 설정한다.
+        // foreach (Collider2D targetCollider2d in targettargetCollider2dArray)
+        // {
+        //     // 만약 비교할 거리보다 작다면 해당 오브젝트를 목표 오브젝트로 설정한다.
+        //     if ((targetCollider2d.transform.position - transform.position).sqrMagnitude <= compareDistancefloat)
+        //     {
+        //         targetTransform = targetCollider2d.transform;
+        //     }
+        //     // 만약 비교할 거리가 더 크다면 
+        //     else
+        //     {
+        //         // 적과 자신의 거리를 대략적으로 구한다 (제곱값)
+        //         compareDistancefloat = (targetCollider2d.transform.position - transform.position).sqrMagnitude;
+        //     }
+        // }
+
+        // // 여기까지가 싱글기준으로 동일한 로직 -> 이 아래부터는 멀티 플레이 로직
+        // // 만약 멀티환경에서 마스터 기준으로 로직을 실행한다.
+        // if (PhotonNetwork.IsMasterClient && GameManager.Instance.IsMultiPlay)
+        // {
+        //     // 목표한 플레이어의 ID값을 반환한다.
+        //     viewID = targetTransform.GetComponent<PhotonView>().ViewID;
+        // }
+        #endregion 레거시 코드
+
+
+
+        Debug.Log($"플레이어의 ViewID 의 개수 : {GameManager.Instance.PlayerDictionary.Count}");
+        int viewID = 0;
+
+        // 멀티 : 커스텀 프로퍼티에서 캐싱된 플레이어들을 가져와서 직접 거리를 계산하고 짧은 쪽을 타켓으로 한다.
+
+
+
+        return viewID;
+    }
+
     // 공격을 받는 함수
-    public void BeAttacked(int damage)
+    public virtual void BeAttacked(int damage)
     {
         stats.Health -= damage;
+        // 체력이 0 이하가 됬을 때 몬스터는 사라진다.
         if (stats.Health <= 0)
         {
             gameObject.SetActive(false);
+
+            // 몬스터는 풀에 넣어주기
+            if (IsPoolInsert)
+            {
+                IsPoolInsert = false;
+                PoolManager.Instance.InsertObject("Enemy", gameObject);
+            }
             return;
         }
         bool IsKnockback = false;

@@ -55,7 +55,10 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion 플레이어 트랜스폼
 
+    #region 멀티 : 플레이어를 구분할 딕셔너리
+    public Dictionary<int, GameObject> PlayerDictionary = new Dictionary<int, GameObject>();
 
+    #endregion 멀티 : 플레이어를 구분할 딕셔너리
 
     // 싱글, 멀티 구분 bool 타입
     public bool IsMultiPlay { get; private set; } = false;
@@ -74,9 +77,9 @@ public class GameManager : Singleton<GameManager>
 
 
     // 멀티 플레이 설정하는 함수
-    public void MultiPlaySetting()
+    public void SettingMultiPlay(bool IsMulti)
     {
-        IsMultiPlay = true;
+        IsMultiPlay = IsMulti;
     }
 
     /// <summary>씬을 이동하는 함수</summary>

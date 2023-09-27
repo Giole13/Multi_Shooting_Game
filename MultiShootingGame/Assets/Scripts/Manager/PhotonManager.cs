@@ -97,7 +97,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         // 초당 동기화 함수 호출 수 설정
         PhotonNetwork.SendRate = 60;
 
-        PhotonNetwork.AutomaticallySyncScene = true;
         photonView.RPC("SceneMove", RpcTarget.All);
     }
 
@@ -111,6 +110,5 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     public void LeaveServer()
     {
         PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
     }
 }
