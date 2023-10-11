@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using ExitGames.Client.Photon.StructWrapping;
 using Photon.Pun;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
+public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
 {
     [SerializeField] protected Gun enemyGun;
 
+    [SerializeField] Transform weaponPointTransform;
+
+    [SerializeField] Quaternion networkRotation;
 
     [SerializeField] protected float bulletSpeed = 10;
 
@@ -58,6 +62,9 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
     {
         if (PhotonNetwork.IsMasterClient == false && GameManager.Instance.IsMultiPlay)
         {
+            // 지연보상으로 현재 거리와 동기화 된 거리를 보간한다.
+            weaponPointTransform.rotation = Quaternion.RotateTowards(weaponPointTransform.rotation,
+                                                    networkRotation, 1000f);
             return;
         }
 
@@ -96,8 +103,6 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
         // 싱글 : 로컬일 경우
         if (GameManager.Instance.IsMultiPlay == false)
         {
-            // 플레이어가 한명이라서 바로 참조 가능
-            targetTransform = GameManager.Instance.PlayerTransform;
             SetEnemySpawn(pos, viewID);
             return;
         }
@@ -115,23 +120,29 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
     [PunRPC]
     public void SetEnemySpawn(Vector2 position, int viewID)
     {
+        // 멀티플레이인 경우 viewID 를 받아와서 룸 커스텀 프로퍼티로 찾아 객체를 참조한다.
+        if (GameManager.Instance.IsMultiPlay)
+        {
+            // ViewID값으로 미리 캐싱해놓은 딕셔너리에서 가져와 타겟팅한다.
+            targetTransform = GameManager.Instance.PlayerDictionary[viewID].transform;
+        }
+        // 싱글 : 플레이어가 한명이라서 바로 참조 가능 
+        else if (GameManager.Instance.IsMultiPlay == false)
+        {
+            targetTransform = GameManager.Instance.PlayerTransform;
+        }
+
+        Init();
         gameObject.SetActive(true);
         transform.position = position;
-        Init();
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
 
-        // 멀티플레이인 경우 viewID 를 받아와서 룸 커스텀 프로퍼티로 찾아 객체를 참조한다.
-        if (GameManager.Instance.IsMultiPlay)
-        {
-            // 룸 커스텀 프로퍼티의 key값을 viewID로 넣어 value값을 추적할 타켓으로 정한다.
-            // 2023.09.27 / HyungJun / 여기서 커스텀 프로퍼티를 사용해 ViewID값으로 플레이어 객체를 가져와서 적용시킨다.
-
-        }
+        // Debug.Log($"마스터 여부 : {PhotonNetwork.IsMasterClient}, 멀티 여부 : {GameManager.Instance.IsMultiPlay}");
     }
 
-    // 추적할 오브젝트를 찾는 함수 - 원을 그려 플레이어를 탐색한다.
+    // 추적할 오브젝트를 찾는 함수
     private int SearchingTargetObject()
     {
         #region 레거시 코드
@@ -192,14 +203,13 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
         // }
         #endregion 레거시 코드
 
-
-
         Debug.Log($"플레이어의 ViewID 의 개수 : {GameManager.Instance.PlayerDictionary.Count}");
-        int viewID = 0;
 
-        // 멀티 : 커스텀 프로퍼티에서 캐싱된 플레이어들을 가져와서 직접 거리를 계산하고 짧은 쪽을 타켓으로 한다.
+        // Ver.1 랜덤으로 찾아서 가져온다.
+        // 1 ~ 2 의 숫자에 * 1000 + 1 = 플레이어 ViewID 값
+        int viewID = (Random.Range(1, 3) * 1000) + 1;
 
-
+        // 추후 버전 -> 멀티 : 커스텀 프로퍼티에서 캐싱된 플레이어들을 가져와서 직접 거리를 계산하고 짧은 쪽을 타켓으로 한다.
 
         return viewID;
     }
@@ -237,6 +247,20 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable
             stats.Speed *= -1;
         }
         StartCoroutine(Knockback());
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting)
+        {
+            stream.SendNext(weaponPointTransform.rotation);
+            stream.SendNext(weaponPointTransform.localScale.x);
+        }
+        else
+        {
+            networkRotation = (Quaternion)stream.ReceiveNext();
+            weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
+        }
     }
 
 }

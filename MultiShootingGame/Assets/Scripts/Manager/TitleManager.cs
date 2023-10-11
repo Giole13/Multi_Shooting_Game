@@ -1,28 +1,50 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
 
 
 // 버튼관련 기능들을 담당하는 클래스
-public class ButtonManager : MonoBehaviour
+public class TitleManager : MonoBehaviour
 {
     [SerializeField] private PhotonManager photonManager;
 
     [SerializeField] private Transform matchMakingImage;
-    [SerializeField] private Transform[] selectCharacter;
 
     [SerializeField] private Transform titleTransform;
+
+
+    [SerializeField] private Transform[] selectCharacter;
+    [SerializeField] private Transform[] readyImageTransforms;
+
+
+    private int playerReadyCount = 0;
 
 
     // 캐릭터 선택화면으로 바꿔주는 함수
     public void SwitchSelectCharacterScreen()
     {
+        // 타이틀 매뉴들 꺼주기
         titleTransform.gameObject.SetActive(false);
 
+        // 캐릭터 선택 화면 보여주기
         foreach (var obj in selectCharacter)
         {
             obj.gameObject.SetActive(true);
+        }
+
+        // 멀티플레이라면 플레이어 준비 이미지 켜주기
+        if (GameManager.Instance.IsMultiPlay)
+        {
+            readyImageTransforms[0].parent.gameObject.SetActive(true);
+        }
+        // 싱글플레이 : 플레이어 준비 이미지 끄기
+        else
+        {
+            readyImageTransforms[0].parent.gameObject.SetActive(false);
         }
     }
 
@@ -48,8 +70,28 @@ public class ButtonManager : MonoBehaviour
         matchMakingImage.gameObject.SetActive(true);
     }
 
-    // 캐릭터 선택화면에서 게임을 시작하는 함수
-    public void InGameStartBtn()
+
+    // 멀티 : 게임 준비 완료 버튼 (멀티용 2차 준비)
+    public bool ReadyToGamePlay()
+    {
+        // 플레이어준비가 완료되면 초록색으로 변경해준다.
+        Image readyImage;
+        readyImageTransforms[playerReadyCount].TryGetComponent<Image>(out readyImage);
+        readyImage.color = Color.green;
+        playerReadyCount++;
+
+        // 플레이어 준비 수가 초과하면
+        if (readyImageTransforms.Length <= playerReadyCount)
+        {
+            return true;
+        }
+
+        // 모두 준비가 안돼면 false 반환
+        return false;
+    }
+
+    // 게임 플레이 준비 완료 버튼 (1차 준비)
+    public void ReadyGamePlayBtn()
     {
         // 싱글플레이일 경우 실행하는 로직
         if (GameManager.Instance.IsMultiPlay == false)

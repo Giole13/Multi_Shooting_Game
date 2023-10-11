@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Photon.Pun;
 
 // 플레이어의 UI를 책임지는 클래스
 public class PlayerStatsUI : MonoBehaviour
@@ -10,13 +11,34 @@ public class PlayerStatsUI : MonoBehaviour
 
     [SerializeField] private GameObject hpObject;
     [SerializeField] private Transform hpContain;
-    [SerializeField] private GameObject ammoObject;
     [SerializeField] private TMP_Text ammoText;
+
+    [SerializeField] private TMP_Text isHostTxt;
+
 
     private Player player;
 
     private void Start()
     {
+        // 멀티플레이의 경우 해당 호스트 인지 게스트 인지 알려준다.
+        if (GameManager.Instance.IsMultiPlay)
+        {
+            // 마스터의 경우
+            if (PhotonNetwork.IsMasterClient)
+            {
+                isHostTxt.text = "Host";
+            }
+            else
+            {
+                isHostTxt.text = "Guest";
+            }
+        }
+        // 싱글플레이의 경우 멀티 표시 끄기
+        else if (GameManager.Instance.IsMultiPlay == false)
+        {
+            isHostTxt.gameObject.SetActive(false);
+        }
+
         player = GameManager.Instance.Player;
         GameObject hpobj = hpObject;
 

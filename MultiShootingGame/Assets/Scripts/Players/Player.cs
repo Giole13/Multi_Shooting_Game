@@ -20,7 +20,6 @@ public class Player : MonoBehaviourPun, IDamageable
         Init();
         selfIndication.gameObject.SetActive(false);
 
-
         // 플레이어를 캐싱하는 딕셔너리에다가 넣기
         GameManager.Instance.PlayerDictionary.Add(photonView.ViewID, gameObject);
 

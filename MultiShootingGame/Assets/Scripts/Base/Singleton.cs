@@ -5,8 +5,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 // 싱글톤 클래스
-public class Singleton<T> : MonoBehaviourPun where T : Singleton<T>
+public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {
+
     private static T _instance = null;
 
     public static T Instance

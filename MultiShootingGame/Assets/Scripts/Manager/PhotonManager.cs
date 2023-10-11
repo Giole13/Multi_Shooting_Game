@@ -10,7 +10,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private TMP_Text serverInfoText;
 
-    [SerializeField] private ButtonManager buttonManager;
+    [SerializeField] private TitleManager titleManager;
 
     [SerializeField] private Transform playerCountTransform;
 
@@ -18,6 +18,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     // 서버에 접속하는 함수
     public void SettingMultiPlayer()
     {
+        serverInfoText.text = "서버 접속 시도중...";
         // 서버에 접속하는 함수
         PhotonNetwork.ConnectUsingSettings();
     }
@@ -25,6 +26,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     // 마스터 서버에 연결 되었을때 호출되는 함수
     public override void OnConnectedToMaster()
     {
+        serverInfoText.text = "방에 입장중...";
         // 서버의 목록에서 방이 존재하는지 검색한다.
         PhotonNetwork.JoinRandomRoom();
     }
@@ -40,13 +42,13 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     // 방을 생성되었을때 호출되는 함수
     public override void OnCreatedRoom()
     {
-        serverInfoText.text = "방을 생성 완료!";
+        serverInfoText.text = "방 생성 완료!";
     }
 
     // 방에 들어왔을 때 호출되는 함수
     public override void OnJoinedRoom()
     {
-        serverInfoText.text = "방에 입장했어요! 플레이어를 기다리는중...";
+        serverInfoText.text = "플레이어를 기다리는중...";
         // 1. 플레이어 입장을 기다린다.
         // 2. 플레이어가 2명이상이 되면 캐릭터 선택 씬으로 넘어간다.
         StartCoroutine(WaitForPlayer());
@@ -67,9 +69,8 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         serverInfoText.text = $"방에 입장합니다...";
 
         yield return new WaitForSeconds(1f);
-
         // 타이틀 화면에서 캐릭터 선택화면으로 바꿔주기만 하기
-        buttonManager.SwitchSelectCharacterScreen();
+        titleManager.SwitchSelectCharacterScreen();
 
         photonView.RPC("CountingPlayerNum", RpcTarget.AllBuffered, room.PlayerCount);
     }
@@ -97,13 +98,31 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         // 초당 동기화 함수 호출 수 설정
         PhotonNetwork.SendRate = 60;
 
-        photonView.RPC("SceneMove", RpcTarget.All);
+        photonView.RPC("ReadyGamePlayRPC", RpcTarget.All);
+    }
+
+    // 각 클라이언트에서 준비 완료를 갱신하기 위한 함수
+    [PunRPC]
+    private void ReadyGamePlayRPC()
+    {
+        // 만약 함수를 실행했는데 true면 (모든 플레이어가 준비가 되면)
+        // 게임 시작
+        if (titleManager.ReadyToGamePlay())
+        {
+            photonView.RPC("SceneMove", RpcTarget.All);
+        }
     }
 
     [PunRPC]
     private void SceneMove()
     {
-        SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+        // 5초 후 게임 시작
+        StartCoroutine(StartGame());
+        IEnumerator StartGame()
+        {
+            yield return new WaitForSeconds(5f);
+            SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+        }
     }
 
     // 게임이 끝나면 서버를 나가는 함수 

@@ -64,15 +64,13 @@ public class GameManager : Singleton<GameManager>
     public bool IsMultiPlay { get; private set; } = false;
 
 
-
-
-
     //  게임이 끝나고 전부 초기화 해야해주는 함수
     public override void Init()
     {
         playerStatsUI = null;
         player = null;
         playerTransform = null;
+        PlayerDictionary = new Dictionary<int, GameObject>();
     }
 
 

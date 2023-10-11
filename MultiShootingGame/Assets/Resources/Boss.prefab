@@ -282,6 +282,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyGun: {fileID: 7073732452425999343}
+  weaponPointTransform: {fileID: 278437262578014540}
+  networkRotation: {x: 0, y: 0, z: 0, w: 0}
   bulletSpeed: 10
 --- !u!114 &7633146650383655353
 MonoBehaviour:
@@ -302,6 +304,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 8077439514284886803}
   - {fileID: 6988697350894623062}
   sceneViewId: 0
   InstantiationId: 0
@@ -319,7 +322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SynchronizePosition: 1
-  m_SynchronizeRotation: 0
+  m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 1
 --- !u!1001 &8938315739026544655

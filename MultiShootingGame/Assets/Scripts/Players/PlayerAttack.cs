@@ -213,7 +213,6 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         }
         else
         {
-
             networkRotation = (Quaternion)stream.ReceiveNext();
             weaponPointTransform.localScale = new Vector3((float)stream.ReceiveNext(), 1f, 0f);
         }

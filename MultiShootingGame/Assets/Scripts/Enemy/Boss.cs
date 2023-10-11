@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Photon.Pun;
 
 // 보스를 책임지는 클래스
 public class Boss : Enemy
@@ -23,7 +24,7 @@ public class Boss : Enemy
         {
             // 보스가 죽었을 때는 엔딩이 나온다.
             gameObject.SetActive(false);
-            SceneManager.LoadSceneAsync(Define.ENDING_SCENE_NAME);
+            photonView.RPC("SceneMove", RpcTarget.All);
             return;
         }
         bool IsKnockback = false;
@@ -42,5 +43,11 @@ public class Boss : Enemy
             stats.Speed *= -1;
         }
         StartCoroutine(Knockback());
+    }
+
+    [PunRPC]
+    private void SceneMove()
+    {
+        SceneManager.LoadSceneAsync(Define.ENDING_SCENE_NAME);
     }
 }
