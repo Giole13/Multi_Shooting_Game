@@ -67,11 +67,16 @@ public class PoolManager : Singleton<PoolManager>
                 }
                 else
                 {
-                    // 멀티: 동기화 해야 하는 객체라면(photonView 컴포넌트) 게스트일 경우 넘어가기
+                    // 멀티 : 동기화 해야 하는 객체라면(photonView 컴포넌트) 게스트일 경우 넘어가기
                     if (GameManager.Instance.IsMultiPlay && poolList[i].IsMultiPlaySync)
                     {
                         break;
                     }
+                    // // 싱글 : 멀티가 아니고 멀티에서 동기화 해야 하는 오브젝트라면 photonView를 제거해준다.
+                    // else if ((GameManager.Instance.IsMultiPlay == false) && poolList[i].IsMultiPlaySync)
+                    // {
+                    //     Destroy(poolList[i].obj.GetComponent<PhotonView>());
+                    // }
                     bullet = Instantiate(poolList[i].obj, transform.GetChild(i));
                     bullet.name += "_" + j;
                     bullet.SetActive(false);

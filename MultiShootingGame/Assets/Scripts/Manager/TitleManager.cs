@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -19,6 +20,8 @@ public class TitleManager : MonoBehaviour
 
     [SerializeField] private Transform[] selectCharacter;
     [SerializeField] private Transform[] readyImageTransforms;
+    [SerializeField] private TMP_Text infoTxt;
+
 
 
     private int playerReadyCount = 0;
@@ -80,14 +83,20 @@ public class TitleManager : MonoBehaviour
         readyImage.color = Color.green;
         playerReadyCount++;
 
-        // 플레이어 준비 수가 초과하면
+
+        // 플레이어 준비 수가 초과하면 true 반환
         if (readyImageTransforms.Length <= playerReadyCount)
         {
             return true;
         }
 
-        // 모두 준비가 안돼면 false 반환
+        // 모두 준비가 안되면 false 반환
         return false;
+    }
+
+    public void StartCountDownToGameStart(int num)
+    {
+        infoTxt.text = $"{num}초 후 게임이 시작됩니다.";
     }
 
     // 게임 플레이 준비 완료 버튼 (1차 준비)

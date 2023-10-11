@@ -49,6 +49,7 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         {
             gameObject.SetActive(false);
         }
+        // gameObject.SetActive(false);
     }
 
     // 상속받은 곳에서 사용할 것

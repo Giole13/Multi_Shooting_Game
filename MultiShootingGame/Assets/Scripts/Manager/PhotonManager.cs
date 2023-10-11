@@ -95,8 +95,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
     // 멀티 환경으로 게임 시작
     public void StartInGame()
     {
-        // 초당 동기화 함수 호출 수 설정
-        PhotonNetwork.SendRate = 60;
 
         photonView.RPC("ReadyGamePlayRPC", RpcTarget.All);
     }
@@ -109,20 +107,34 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         // 게임 시작
         if (titleManager.ReadyToGamePlay())
         {
-            photonView.RPC("SceneMove", RpcTarget.All);
+            // 초당 동기화 함수 호출 수 설정
+            PhotonNetwork.SendRate = 60;
+            Debug.Log("모두 준비 완료 게임 시작");
+            // 5초 후 게임 시작
+            StartCoroutine(StartGame());
         }
     }
 
-    [PunRPC]
-    private void SceneMove()
+    // [PunRPC]
+    // private void SceneMove()
+    // {
+    //     // 5초 후 게임 시작
+    //     StartCoroutine(StartGame());
+    // }
+
+    private IEnumerator StartGame()
     {
-        // 5초 후 게임 시작
-        StartCoroutine(StartGame());
-        IEnumerator StartGame()
+        for (int i = 5; i > 0; i--)
         {
-            yield return new WaitForSeconds(5f);
-            SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
+            // 5초후 게임 시작
+            yield return new WaitForSeconds(1f);
+            titleManager.StartCountDownToGameStart(i);
+            Debug.Log($"카운트 다운중 {i}");
         }
+
+        // yield return new WaitForSeconds(5f);
+        // titleManager.StartCountDownToGameStart(5);
+        SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
     }
 
     // 게임이 끝나면 서버를 나가는 함수 

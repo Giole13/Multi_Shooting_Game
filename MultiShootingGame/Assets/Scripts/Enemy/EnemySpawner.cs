@@ -58,8 +58,6 @@ public class EnemySpawner : MonoBehaviour
             // 최대 스폰까지 도달한다면 멈추고 보스 소환
             if (currentSpawnCount >= maxSpawnCount)
             {
-
-
                 bossTransform.GetComponent<ISetPosition>().SetPosition(spawnPoint[randomIndex].position);
                 yield break;
             }
