@@ -35,14 +35,14 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     protected bool IsPoolInsert = false;
 
     // 공격을 할 수 있게 허락하는 변수
-    private bool IsAttack;
+    // private bool IsAttack;
 
     private void Start()
     {
         enemyRigid = GetComponent<Rigidbody2D>();
         // targetTransform = GameManager.Instance.PlayerTransform;
         Init();
-        IsAttack = false;
+        // IsAttack = false;
 
         // 멀티 : 자신이 마스터에서 관리하는 객체가 아닐 경우
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay)

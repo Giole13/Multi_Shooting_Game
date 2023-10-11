@@ -24,10 +24,9 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
                     GameObject obj = new GameObject(typeof(T).ToString());
                     // 해당 객체에 자신 스크립트 추가
                     _instance = obj.AddComponent<T>();
-
-                    // DontDestroyOnLoad(obj);
+                    DontDestroyOnLoad(obj);
                 }
-                // DontDestroyOnLoad(_instance);
+                DontDestroyOnLoad(_instance);
             }
             return _instance;
         }

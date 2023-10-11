@@ -326,7 +326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serverInfoText: {fileID: 0}
-  buttonManager: {fileID: 0}
+  titleManager: {fileID: 0}
   playerCountTransform: {fileID: 0}
 --- !u!4 &590119921
 Transform:
@@ -582,8 +582,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   photonManager: {fileID: 0}
   matchMakingImage: {fileID: 0}
-  selectCharacter: []
   titleTransform: {fileID: 0}
+  selectCharacter: []
+  readyImageTransforms: []
+  infoTxt: {fileID: 0}
 --- !u!4 &845222442
 Transform:
   m_ObjectHideFlags: 0
@@ -1348,50 +1350,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1677722004}
   m_CullTransparentMesh: 1
---- !u!1 &2083109530
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2083109532}
-  - component: {fileID: 2083109531}
-  m_Layer: 0
-  m_Name: ObjectManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2083109531
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083109530}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49c316099226a6d4c84a9d56ff1b5e1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &2083109532
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2083109530}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 120.305855, y: 118.41718, z: -1.2655947}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -1400,6 +1358,5 @@ SceneRoots:
   - {fileID: 308870318}
   - {fileID: 1048066331}
   - {fileID: 845222442}
-  - {fileID: 2083109532}
   - {fileID: 944870915}
   - {fileID: 590119921}

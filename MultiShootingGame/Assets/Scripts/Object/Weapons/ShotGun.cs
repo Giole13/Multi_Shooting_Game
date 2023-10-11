@@ -23,6 +23,8 @@ public class ShotGun : Gun
     //샷건의 공격 로직
     protected override IEnumerator FireGunRoutine()
     {
+        yield return null;
+
         IsFire = true;
         while (IsFire && IsFire2)
         {

@@ -6,12 +6,33 @@ using UnityEngine.UIElements;
 using Photon.Pun;
 
 // 여러 오브젝트 풀링들을 책임지는 클래스
-public class PoolManager : Singleton<PoolManager>
+public class PoolManager : MonoBehaviour
 {
     // 풀링 객체
     // 딕셔너리에서 바로 접근 후 뽑아 사용하는 형태
     private static Dictionary<string, Stack<GameObject>> objectPool = null;
 
+    private static PoolManager _instance = null;
+
+    public static PoolManager Instance
+    {
+        get
+        {
+            // 널인 경우 새로운 객체 생성 및 반환
+            if (_instance is null)
+            {
+                _instance = FindObjectOfType<PoolManager>();
+                if (_instance is null)
+                {
+                    // 자신의 스크립트 이름으로 객체 생성
+                    GameObject obj = new GameObject(typeof(PoolManager).ToString());
+                    // 해당 객체에 자신 스크립트 추가
+                    _instance = obj.AddComponent<PoolManager>();
+                }
+            }
+            return _instance;
+        }
+    }
 
     // 풀링할 프리팹 리스트
     [SerializeField] private List<poolObjectInfo> poolList;
@@ -28,7 +49,7 @@ public class PoolManager : Singleton<PoolManager>
         public bool IsMultiPlaySync;
     }
 
-    private void Awake()
+    private void Start()
     {
         // 싱글플레이 기준
         objectPool = new Dictionary<string, Stack<GameObject>>();

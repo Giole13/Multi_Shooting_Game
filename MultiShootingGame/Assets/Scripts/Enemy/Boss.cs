@@ -24,7 +24,14 @@ public class Boss : Enemy
         {
             // 보스가 죽었을 때는 엔딩이 나온다.
             gameObject.SetActive(false);
-            photonView.RPC("SceneMove", RpcTarget.All);
+            if (GameManager.Instance.IsMultiPlay)
+            {
+                photonView.RPC("SceneMove", RpcTarget.All);
+            }
+            else
+            {
+                SceneMove();
+            }
             return;
         }
         bool IsKnockback = false;

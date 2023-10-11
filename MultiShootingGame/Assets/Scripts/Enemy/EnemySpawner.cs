@@ -23,13 +23,12 @@ public class EnemySpawner : MonoBehaviour
         {
             // 몬스터 스폰 켜주기
             StartCoroutine(EnemyCreate());
-            // 보스는 꺼두기
         }
 
         // 싱글 : 몬스터 스포너 작동
         else if (GameManager.Instance.IsMultiPlay == false)
         {
-            Instantiate(bossTransform.gameObject);
+            bossTransform = Instantiate(bossTransform.gameObject).transform;
             bossTransform.gameObject.SetActive(false);
             StartCoroutine(EnemyCreate());
         }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using Photon.Pun;
 
 // 게임의 시스템을 책임지는 클래스
 public class GameManager : Singleton<GameManager>
@@ -56,13 +56,24 @@ public class GameManager : Singleton<GameManager>
     #endregion 플레이어 트랜스폼
 
     #region 멀티 : 플레이어를 구분할 딕셔너리
-    public Dictionary<int, GameObject> PlayerDictionary = new Dictionary<int, GameObject>();
-
+    public Dictionary<int, GameObject> PlayerDictionary = null;
     #endregion 멀티 : 플레이어를 구분할 딕셔너리
+
+    #region 멀티 : 플레이어의 생존한 사람의 수를 나타내는 정수
+    public int PlayerLiveCount
+    {
+        get;
+        private set;
+    }
+    #endregion 멀티 : 플레이어의 생존한 사람의 수를 나타내는 정수
+
 
     // 싱글, 멀티 구분 bool 타입
     public bool IsMultiPlay { get; private set; } = false;
 
+
+    private Transform inGameCameraTransform;
+    private bool IsCameraFollowingPlayer = false;
 
     //  게임이 끝나고 전부 초기화 해야해주는 함수
     public override void Init()
@@ -73,11 +84,101 @@ public class GameManager : Singleton<GameManager>
         PlayerDictionary = new Dictionary<int, GameObject>();
     }
 
+    // 시작할 때 모두 초기화 해주기
+    private void Awake()
+    {
+        Instance.Init();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void Update()
+    {
+        if (IsCameraFollowingPlayer)
+        {
+            // 설정한 타겟을 카메라는 계속 따라간다.
+            inGameCameraTransform.position = PlayerTransform.position + new Vector3(0f, 0f, -10f);
+        }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 씬 이름에 따라 초기화 하는 것들을 다르게 해주기
+        switch (scene.name)
+        {
+            case Define.TITLE_SCENE_NAME:
+                Debug.Log("타이틀 초기화!");
+                break;
+            case Define.INGAME_SCENE_NAME:
+                Debug.Log("인게임 초기화!");
+                InitInGame();
+                break;
+            case Define.ENDING_SCENE_NAME:
+                Debug.Log("엔딩 초기화!");
+                InitEndingGame();
+                break;
+        }
+    }
+
+    private void InitEndingGame()
+    {
+        // 만약 멀티플레이라면 연결 끊기
+        if (Instance.IsMultiPlay)
+        {
+            PhotonNetwork.Disconnect();
+        }
+        // 객체 초기화
+        Instance.Init();
+        IsCameraFollowingPlayer = false;
+    }
+
+    // 인게임 초기화 하는 함수
+    private void InitInGame()
+    {
+        inGameCameraTransform = GameObject.FindWithTag("MainCamera").transform;
+
+        // 싱글플레이일 경우 플레이어 스폰후 리턴
+        if (GameManager.Instance.IsMultiPlay == false)
+        {
+            IsCameraFollowingPlayer = true;
+            GameObject obj = Instantiate(Resources.Load("Player_Knight") as GameObject);
+            playerTransform = obj.transform;
+            obj.GetComponent<PhotonRigidbody2DView>().enabled = false;
+            obj.GetComponent<PhotonTransformView>().enabled = false;
+            return;
+        }
+
+        // 플레이어 생성
+        GameObject multiPlayerObj = PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
+
+        // // 플레이어의 포톤 뷰를 가져온다.
+        PhotonView playerPhotonView;
+        multiPlayerObj.TryGetComponent<PhotonView>(out playerPhotonView);
+
+        // 로컬의 객체에만 카메라 고정 적용
+        if (playerPhotonView.IsMine)
+        {
+            playerTransform = multiPlayerObj.transform;
+            IsCameraFollowingPlayer = true;
+        }
+    }
+
+    // 멀티 : 플레이어가 죽어서 다른 사람을 관전하는 함수
+    public void SwitchPlayerFollowingCamera(int viewID)
+    {
+        playerTransform = PlayerDictionary[viewID].transform;
+    }
 
     // 멀티 플레이 설정하는 함수
     public void SettingMultiPlay(bool IsMulti)
     {
         IsMultiPlay = IsMulti;
+        PlayerLiveCount = 2;
+    }
+
+    // 플레이어가 죽으면 생존 카운트를 내리고 모든 플레이어가 죽으면 true를 반환하는 함수
+    public void ReductionPlayerLiveCount()
+    {
+        PlayerLiveCount--;
     }
 
     /// <summary>씬을 이동하는 함수</summary>
