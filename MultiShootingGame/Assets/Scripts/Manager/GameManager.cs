@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
+using UnityEngine.Assertions;
 
 // 게임의 시스템을 책임지는 클래스
 public class GameManager : Singleton<GameManager>
@@ -106,14 +107,11 @@ public class GameManager : Singleton<GameManager>
         switch (scene.name)
         {
             case Define.TITLE_SCENE_NAME:
-                Debug.Log("타이틀 초기화!");
                 break;
             case Define.INGAME_SCENE_NAME:
-                Debug.Log("인게임 초기화!");
                 InitInGame();
                 break;
             case Define.ENDING_SCENE_NAME:
-                Debug.Log("엔딩 초기화!");
                 InitEndingGame();
                 break;
         }
@@ -165,6 +163,8 @@ public class GameManager : Singleton<GameManager>
     // 멀티 : 플레이어가 죽어서 다른 사람을 관전하는 함수
     public void SwitchPlayerFollowingCamera(int viewID)
     {
+        Debug.Assert(PlayerDictionary[viewID] != null);
+        Debug.Assert(PlayerDictionary[viewID].transform != null);
         playerTransform = PlayerDictionary[viewID].transform;
     }
 
@@ -179,6 +179,10 @@ public class GameManager : Singleton<GameManager>
     public void ReductionPlayerLiveCount()
     {
         PlayerLiveCount--;
+        if (GameManager.Instance.PlayerLiveCount <= 0)
+        {
+            SceneManager.LoadSceneAsync(Define.ENDING_SCENE_NAME);
+        }
     }
 
     /// <summary>씬을 이동하는 함수</summary>

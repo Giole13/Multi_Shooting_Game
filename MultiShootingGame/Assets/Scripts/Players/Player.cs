@@ -23,6 +23,7 @@ public class Player : MonoBehaviourPun, IDamageable
 
         // 플레이어를 캐싱하는 딕셔너리에다가 넣기
         GameManager.Instance.PlayerDictionary.Add(photonView.ViewID, gameObject);
+        Debug.Log($"해당 플레이어의 ID {photonView.ViewID}");
 
         // 자기 자신이라면 자신을 표시하는 삼각형 켜주기
         if (photonView.IsMine)
@@ -70,24 +71,28 @@ public class Player : MonoBehaviourPun, IDamageable
             {
                 gameObject.SetActive(false);
                 GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
+                return;
             }
             // 멀티 : 
             // 1. 플레이어 꺼주기
             // 2. 플레이어 생존수 감소
             // 3. 관전으로 변경
             // 4. 생존자 수가 0명 이하일 경우 엔딩으로 넘기기
-            else if (GameManager.Instance.IsMultiPlay)
+
+            Debug.Assert(GameManager.Instance.PlayerDictionary.Count == 2);
+
+            foreach (var obj in GameManager.Instance.PlayerDictionary)
             {
-                photonView.RPC("DiePlayerRPC", RpcTarget.All);
-                foreach (KeyValuePair<int, GameObject> obj in GameManager.Instance.PlayerDictionary)
+                Debug.Log(obj.Key);
+                // 자신과 다른 viewID 값 -> 다른 플레이어를 찾았을 때
+                if (photonView.ViewID != obj.Key)
                 {
-                    // 자신과 다른 viewID 값 -> 다른 플레이어를 찾았을 때
-                    if (photonView.ViewID != obj.Key)
-                    {
-                        GameManager.Instance.SwitchPlayerFollowingCamera(obj.Key);
-                    }
+                    Debug.Log($"전환할 플레이어 아이디 : {obj.Key}");
+                    GameManager.Instance.SwitchPlayerFollowingCamera(obj.Key);
+                    break;
                 }
             }
+            photonView.RPC("DiePlayerRPC", RpcTarget.All);
         }
     }
 
@@ -96,10 +101,6 @@ public class Player : MonoBehaviourPun, IDamageable
     {
         gameObject.SetActive(false);
         GameManager.Instance.ReductionPlayerLiveCount();
-        if (GameManager.Instance.PlayerLiveCount <= 0)
-        {
-            SceneManager.LoadSceneAsync(Define.ENDING_SCENE_NAME);
-        }
     }
 
     [PunRPC]

@@ -96,124 +96,80 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     }
 
 
-    // 멀티 : 호스트 실행 - 몬스터가 소환되는 함수, 몬스터의 스펙을 초기화 하는 함수, 총으로 공격함수도 실행
+    // 아래쪽 함수들은 리펙토링 예정
+
     public void SetPosition(Vector2 pos)
     {
-        int viewID = 0;
-
         // 싱글 : 로컬일 경우
         if (GameManager.Instance.IsMultiPlay == false)
         {
-            SetEnemySpawn(pos, viewID);
+            SetEnemySpawn(pos);
+
+            StartCoroutine(SearchingTargetToDistanceCompare());
             return;
         }
 
         // 멀티 : 마스터일 경우 
         if (PhotonNetwork.IsMasterClient && GameManager.Instance.IsMultiPlay)
         {
-            // 호스트에서 몬스터가 추적할 플레이어를 연산 한다.
-            viewID = SearchingTargetObject();
-            photonView.RPC("SetEnemySpawn", RpcTarget.All, pos, viewID);
+            // 상세 설정은 전역으로 설정한다.
+            photonView.RPC("SetEnemySpawn", RpcTarget.All, pos);
+
+            // 객체가 활성화가 되어야 작동하는 코루틴
+            StartCoroutine(SearchingTargetToDistanceCompare());
             return;
         }
     }
 
+    // 적의 상세 설정을 결정하는 함수
     [PunRPC]
-    public void SetEnemySpawn(Vector2 position, int viewID)
+    protected void SetEnemySpawn(Vector2 position)
     {
-        // 멀티플레이인 경우 viewID 를 받아와서 룸 커스텀 프로퍼티로 찾아 객체를 참조한다.
-        if (GameManager.Instance.IsMultiPlay)
-        {
-            // ViewID값으로 미리 캐싱해놓은 딕셔너리에서 가져와 타겟팅한다.
-            targetTransform = GameManager.Instance.PlayerDictionary[viewID].transform;
-        }
-        // 싱글 : 플레이어가 한명이라서 바로 참조 가능 
-        else if (GameManager.Instance.IsMultiPlay == false)
-        {
-            targetTransform = GameManager.Instance.PlayerTransform;
-        }
-
         Init();
         gameObject.SetActive(true);
         transform.position = position;
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
-
-        // Debug.Log($"마스터 여부 : {PhotonNetwork.IsMasterClient}, 멀티 여부 : {GameManager.Instance.IsMultiPlay}");
     }
 
-    // 추적할 오브젝트를 찾는 함수
-    private int SearchingTargetObject()
+    private IEnumerator SearchingTargetToDistanceCompare()
     {
-        #region 레거시 코드
-        // // 식별할 레이어 마스크의 넘버 (2진수 형태가 아님)
-        // LayerMask playerLayer = LayerMask.NameToLayer("Player");
-        // // 2D 콜라이더에서 IsTrigger가 활성화 된 객체도 충돌을 허락하는 프로퍼티
-        // Physics2D.queriesHitTriggers = true;
+        // 싱글 : 플레이어가 한명이라서 바로 참조 가능 및 코루틴 탈출 
+        if (GameManager.Instance.IsMultiPlay == false)
+        {
+            targetTransform = GameManager.Instance.PlayerTransform;
+            yield break;
+        }
 
-        // Collider2D[] targettargetCollider2dArray = new Collider2D[0];
+        float targetDistanceFloat = float.MaxValue;
 
-        // // 1초 간격으로 플레이어를 계속 탐색
-        // WaitForSeconds searchCycleTime = new WaitForSeconds(1f);
+        while (true)
+        {
+            // 가장 가까운 플레이어를 계산해서 ViewID 값을 계산한다.
+            foreach (var target in GameManager.Instance.PlayerDictionary)
+            {
+                // 해당 오브젝트가 비활성화 상태일 경우 다른 객체를 참조하고 패스
+                if (target.Value.activeSelf == false)
+                {
+                    targetDistanceFloat = float.MaxValue;
+                    continue;
+                }
 
-        // StartCoroutine(SearchCoroutine());
-        // IEnumerator SearchCoroutine()
-        // {
-        //     while (true)
-        //     {
-        //         // 플레이어 레이어 만큼 2진수를 왼쪽으로 이동시키고 해당 레이어를 식별한다. -> 충돌된 객체들을 배열 형태로 반환
-        //         targettargetCollider2dArray = Physics2D.OverlapCircleAll(transform.position, 10f, 1 << playerLayer);
-
-        //         // 객체가 널이 아니게 되면
-        //         if (targettargetCollider2dArray[0] != null)
-        //         {
-        //             break;
-        //         }
-
-        //         yield return searchCycleTime;
-        //     }
-
-        // }
-
-        // // 비교할 거리를 담는 변수
-        // float compareDistancefloat = float.MaxValue;
-
-        // // 자신 (적)의 위치와 타켓의 위치를 비교하여 더 짧은 거리의 객체를 타겟으로 설정한다.
-        // foreach (Collider2D targetCollider2d in targettargetCollider2dArray)
-        // {
-        //     // 만약 비교할 거리보다 작다면 해당 오브젝트를 목표 오브젝트로 설정한다.
-        //     if ((targetCollider2d.transform.position - transform.position).sqrMagnitude <= compareDistancefloat)
-        //     {
-        //         targetTransform = targetCollider2d.transform;
-        //     }
-        //     // 만약 비교할 거리가 더 크다면 
-        //     else
-        //     {
-        //         // 적과 자신의 거리를 대략적으로 구한다 (제곱값)
-        //         compareDistancefloat = (targetCollider2d.transform.position - transform.position).sqrMagnitude;
-        //     }
-        // }
-
-        // // 여기까지가 싱글기준으로 동일한 로직 -> 이 아래부터는 멀티 플레이 로직
-        // // 만약 멀티환경에서 마스터 기준으로 로직을 실행한다.
-        // if (PhotonNetwork.IsMasterClient && GameManager.Instance.IsMultiPlay)
-        // {
-        //     // 목표한 플레이어의 ID값을 반환한다.
-        //     viewID = targetTransform.GetComponent<PhotonView>().ViewID;
-        // }
-        #endregion 레거시 코드
-
-        Debug.Log($"플레이어의 ViewID 의 개수 : {GameManager.Instance.PlayerDictionary.Count}");
-
-        // Ver.1 랜덤으로 찾아서 가져온다.
-        // 1 ~ 2 의 숫자에 * 1000 + 1 = 플레이어 ViewID 값
-        int viewID = (Random.Range(1, 3) * 1000) + 1;
-
-        // 추후 버전 -> 멀티 : 커스텀 프로퍼티에서 캐싱된 플레이어들을 가져와서 직접 거리를 계산하고 짧은 쪽을 타켓으로 한다.
-
-        return viewID;
+                // 만약 비교한 거리보다 작다면 더욱 가깝다 생각
+                if ((transform.position - target.Value.transform.position).sqrMagnitude < targetDistanceFloat)
+                {
+                    // 적과의 거리 계산 및 타겟팅
+                    targetDistanceFloat = (transform.position - target.Value.transform.position).sqrMagnitude;
+                    targetTransform = GameManager.Instance.PlayerDictionary[target.Key].transform;
+                }
+            }
+            yield return new WaitForSeconds(1f);
+            // 1초마다 갱신
+            targetDistanceFloat = (transform.position - targetTransform.position).sqrMagnitude;
+        }
     }
+
 
     // 공격을 받는 함수
     public virtual void BeAttacked(int damage)

@@ -109,7 +109,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         {
             // 초당 동기화 함수 호출 수 설정
             PhotonNetwork.SendRate = 60;
-            Debug.Log("모두 준비 완료 게임 시작");
             // 5초 후 게임 시작
             StartCoroutine(StartGame());
         }
@@ -129,7 +128,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             // 5초후 게임 시작
             yield return new WaitForSeconds(1f);
             titleManager.StartCountDownToGameStart(i);
-            Debug.Log($"카운트 다운중 {i}");
         }
 
         // yield return new WaitForSeconds(5f);
@@ -137,7 +135,7 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
     }
 
-    // 게임이 끝나면 서버를 나가는 함수 
+    // 게임이 끝나면 서버를 나가는 함수
     public void LeaveServer()
     {
         PhotonNetwork.LeaveRoom();
