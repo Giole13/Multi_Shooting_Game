@@ -23,7 +23,6 @@ public class Player : MonoBehaviourPun, IDamageable
 
         // 플레이어를 캐싱하는 딕셔너리에다가 넣기
         GameManager.Instance.PlayerDictionary.Add(photonView.ViewID, gameObject);
-        Debug.Log($"해당 플레이어의 ID {photonView.ViewID}");
 
         // 자기 자신이라면 자신을 표시하는 삼각형 켜주기
         if (photonView.IsMine)
@@ -32,10 +31,8 @@ public class Player : MonoBehaviourPun, IDamageable
         }
     }
 
-    private void Update()
-    {
-
-    }
+    private void Start() { }
+    private void Update() { }
 
     // 자식에서 초기화하는 함수
     protected virtual void Init()
@@ -48,6 +45,7 @@ public class Player : MonoBehaviourPun, IDamageable
     public virtual void BeAttacked(int damage)
     {
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
+
 
         // 멀티 : 각 클라이언트의 자신의 체력을 동기화
         if (GameManager.Instance.IsMultiPlay)
@@ -62,6 +60,10 @@ public class Player : MonoBehaviourPun, IDamageable
 
         // 체력 UI 갱신
         GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
+        // 피격시 흔들림 효과 추가
+        GameManager.Instance.BeAttackedEffect();
+
+        return; // 디버그용
 
         // 체력이 0이 되면 엔딩 씬으로 이동
         if (stats.Health <= 0)

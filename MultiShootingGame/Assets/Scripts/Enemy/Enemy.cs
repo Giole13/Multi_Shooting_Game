@@ -27,6 +27,9 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     protected WaitForSeconds KnockbackTime = new WaitForSeconds(0.3f);
 
 
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+
     private Transform targetTransform;
     private Rigidbody2D enemyRigid;
 
@@ -53,6 +56,7 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     }
 
     // 상속받은 곳에서 사용할 것
+    // 적의 정보들을 초기화하는 함수
     protected virtual void Init()
     {
         stats = new Stats(5, 1, 1f);
@@ -121,16 +125,20 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         }
     }
 
-    // 적의 상세 설정을 결정하는 함수
+    // 적이 스폰될 때 초기화하는 함수
     [PunRPC]
     protected void SetEnemySpawn(Vector2 position)
     {
+        TryGetComponent(out spriteRenderer);
+        originalColor = spriteRenderer.color;
+
         Init();
         gameObject.SetActive(true);
         transform.position = position;
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
+
     }
 
     private IEnumerator SearchingTargetToDistanceCompare()
@@ -188,23 +196,29 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
             }
             return;
         }
-        bool IsKnockback = false;
-        // 넉백하는 코루틴
-        IEnumerator Knockback()
-        {
-            // 넉백중이면 코루틴 취소
-            if (IsKnockback)
-            {
-                yield break;
-            }
-            stats.Speed *= -1;
-            IsKnockback = true;
-            yield return KnockbackTime;
-            IsKnockback = false;
-            stats.Speed *= -1;
-        }
         StartCoroutine(Knockback());
     }
+
+    protected bool IsKnockback = false;
+    // 피격당해 넉백하는 코루틴
+    protected IEnumerator Knockback()
+    {
+        spriteRenderer.color = Color.white;
+        // 넉백중이면 코루틴 취소
+        if (IsKnockback)
+        {
+            spriteRenderer.color = originalColor;
+            yield break;
+        }
+        stats.Speed *= -1;
+        IsKnockback = true;
+        yield return KnockbackTime;
+        IsKnockback = false;
+        stats.Speed *= -1;
+
+        spriteRenderer.color = originalColor;
+    }
+
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {

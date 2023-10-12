@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Pun;
 using UnityEngine.Assertions;
+using Cinemachine;
+using UnityEngine.Rendering;
 
 // 게임의 시스템을 책임지는 클래스
 public class GameManager : Singleton<GameManager>
@@ -72,9 +74,17 @@ public class GameManager : Singleton<GameManager>
     // 싱글, 멀티 구분 bool 타입
     public bool IsMultiPlay { get; private set; } = false;
 
+    // 로컬의 캐릭터가 어떤 캐릭터인지 결정하는 프로퍼티 - 기본은 기사로 선택
+    public PlayerCharacterType CharacterType = PlayerCharacterType.KNIGHT;
 
-    private Transform inGameCameraTransform;
-    private bool IsCameraFollowingPlayer = false;
+
+    private Volume InGameVolume;
+
+    private CinemachineVirtualCamera chinemachineVCam;
+
+    private CinemachineBasicMultiChannelPerlin cinemachineVCamBasicMultiChannelPerlin;
+
+    private WaitForSeconds shakeTime = new WaitForSeconds(0.1f);
 
     //  게임이 끝나고 전부 초기화 해야해주는 함수
     public override void Init()
@@ -94,11 +104,7 @@ public class GameManager : Singleton<GameManager>
 
     private void Update()
     {
-        if (IsCameraFollowingPlayer)
-        {
-            // 설정한 타겟을 카메라는 계속 따라간다.
-            inGameCameraTransform.position = PlayerTransform.position + new Vector3(0f, 0f, -10f);
-        }
+
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -126,27 +132,62 @@ public class GameManager : Singleton<GameManager>
         }
         // 객체 초기화
         Instance.Init();
-        IsCameraFollowingPlayer = false;
     }
 
     // 인게임 초기화 하는 함수
     private void InitInGame()
     {
-        inGameCameraTransform = GameObject.FindWithTag("MainCamera").transform;
+        // 가상 카메라 참조
+        GameObject.Find("VCam").TryGetComponent<CinemachineVirtualCamera>(out chinemachineVCam);
+        cinemachineVCamBasicMultiChannelPerlin = chinemachineVCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
 
-        // 싱글플레이일 경우 플레이어 스폰후 리턴
+        // 메인 카메라의 불륨 참조
+        GameObject.FindWithTag("MainCamera").TryGetComponent<Volume>(out InGameVolume);
+
+
+        // 싱글 : 싱글플레이일 경우 플레이어 스폰후 리턴
         if (GameManager.Instance.IsMultiPlay == false)
         {
-            IsCameraFollowingPlayer = true;
-            GameObject obj = Instantiate(Resources.Load("Player_Knight") as GameObject);
+            GameObject obj = default;
+            switch (CharacterType)
+            {
+                case PlayerCharacterType.KNIGHT:
+                    obj = Instantiate(Resources.Load("Player_Knight") as GameObject);
+                    break;
+                case PlayerCharacterType.GUNNER:
+                    obj = Instantiate(Resources.Load("Player_Gunner") as GameObject);
+                    break;
+                default:
+                    Debug.Assert(false, "캐릭터의 일치하는 경우가 없음");
+                    break;
+            }
+
             playerTransform = obj.transform;
             obj.GetComponent<PhotonRigidbody2DView>().enabled = false;
             obj.GetComponent<PhotonTransformView>().enabled = false;
+            chinemachineVCam.Follow = playerTransform;
             return;
         }
 
+        // 멀티 : 선택한 캐릭터에 따라 다른 캐릭터 스폰
+
+        GameObject multiPlayerObj = default;
+
+        switch (CharacterType)
+        {
+            case PlayerCharacterType.KNIGHT:
+                multiPlayerObj = PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
+                break;
+            case PlayerCharacterType.GUNNER:
+                multiPlayerObj = PhotonNetwork.Instantiate("Player_Gunner", Vector2.zero, Quaternion.identity);
+                break;
+            default:
+                Debug.Assert(false, "캐릭터의 일치하는 경우가 없음");
+                break;
+        }
+
         // 플레이어 생성
-        GameObject multiPlayerObj = PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
+        // multiPlayerObj = PhotonNetwork.Instantiate("Player_Knight", Vector2.zero, Quaternion.identity);
 
         // // 플레이어의 포톤 뷰를 가져온다.
         PhotonView playerPhotonView;
@@ -156,7 +197,60 @@ public class GameManager : Singleton<GameManager>
         if (playerPhotonView.IsMine)
         {
             playerTransform = multiPlayerObj.transform;
-            IsCameraFollowingPlayer = true;
+            chinemachineVCam.Follow = playerTransform;
+        }
+    }
+
+
+    private bool isShaking = false;
+
+    // 흔들리는 효과를 주는 함수
+    public void BeAttackedEffect()
+    {
+        if (isShaking) { return; }
+        StartCoroutine(DoShakeCameraCoroutine());
+        StartCoroutine(FadeOutVolumeCoroutine());
+
+
+        // 비네트 효과를 주어 가장자리가 천천히 어두워지는 효과
+        IEnumerator FadeOutVolumeCoroutine()
+        {
+            float fadeValueFloat = 0.1f;
+
+            InGameVolume.weight += fadeValueFloat;
+
+            while (true)
+            {
+                // 점점 효과가 강해지다 1이상일경우 다시 줄어드는 효과
+                if (1f <= InGameVolume.weight)
+                {
+                    fadeValueFloat *= -1;
+                }
+                // 1이하가 되면 탈출
+                else if (InGameVolume.weight <= 0f)
+                {
+                    InGameVolume.weight = 0f;
+                    yield break;
+                }
+
+                InGameVolume.weight += fadeValueFloat;
+                yield return null;
+            }
+
+
+        }
+        IEnumerator DoShakeCameraCoroutine()
+        {
+            cinemachineVCamBasicMultiChannelPerlin.m_AmplitudeGain = 3f;
+            cinemachineVCamBasicMultiChannelPerlin.m_FrequencyGain = 3f;
+            isShaking = true;
+
+            Debug.Log("총알 발싸!");
+
+            yield return shakeTime;
+            cinemachineVCamBasicMultiChannelPerlin.m_AmplitudeGain = 0f;
+            cinemachineVCamBasicMultiChannelPerlin.m_FrequencyGain = 0f;
+            isShaking = false;
         }
     }
 

@@ -16,11 +16,17 @@ public class TitleManager : MonoBehaviour
     [SerializeField] private Transform matchMakingImage;
 
     [SerializeField] private Transform titleTransform;
+    [SerializeField] private Transform settingTransform;
 
 
     [SerializeField] private Transform[] selectCharacter;
     [SerializeField] private Transform[] readyImageTransforms;
     [SerializeField] private TMP_Text infoTxt;
+
+    // 캐릭터 선택시 고른 것을 나타내주는 배열
+    [SerializeField] private Transform[] playerSelectTransforms;
+
+
 
 
 
@@ -116,7 +122,16 @@ public class TitleManager : MonoBehaviour
     // 설정 버튼
     public void SettingBtn()
     {
+        // 타이틀을 꺼주고 세팅 창을 켜준다.
+        titleTransform.gameObject.SetActive(false);
+        settingTransform.gameObject.SetActive(true);
+    }
 
+    // 세팅화면에서 타이틀로 돌아가는 버튼
+    public void SettingToBackBtn()
+    {
+        titleTransform.gameObject.SetActive(true);
+        settingTransform.gameObject.SetActive(false);
     }
 
     // 데스크톱으로 나가기 버튼
@@ -129,5 +144,22 @@ public class TitleManager : MonoBehaviour
     public void BackToTitle()
     {
         GameManager.Instance.SceneMove(Define.TITLE_SCENE_NAME);
+    }
+
+    // 기사 선택 
+    public void SelectKnight()
+    {
+        playerSelectTransforms[0].gameObject.SetActive(true);
+        playerSelectTransforms[1].gameObject.SetActive(false);
+        GameManager.Instance.CharacterType = PlayerCharacterType.KNIGHT;
+    }
+
+    // 총잡이 선택 
+    public void SelectGunner()
+    {
+        playerSelectTransforms[0].gameObject.SetActive(false);
+        playerSelectTransforms[1].gameObject.SetActive(true);
+        GameManager.Instance.CharacterType = PlayerCharacterType.GUNNER;
+
     }
 }

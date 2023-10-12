@@ -168,9 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: Maplestory OTF Bold SDF
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: 1279546463
   material: {fileID: -3934834917317692591}
-  materialHashCode: 0
+  materialHashCode: -1835180257
   m_Version: 1.1.0
   m_SourceFontFileGUID: 068cf540ef079b84489f566222c3fa7e
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 068cf540ef079b84489f566222c3fa7e, type: 3}

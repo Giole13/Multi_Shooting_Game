@@ -37,11 +37,6 @@ public class ShotGun : Gun
 
             for (int i = 0; i < totalNumberBullets; i++)
             {
-                // 풀매니저에서 총알을 참조하고
-                PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
-                // 슈팅만 하면 됨
-                bullet.ShottingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
-
                 // 플레이어가 가지고 있는 총이라면
                 if (IsPlayerWeapon)
                 {
@@ -49,16 +44,21 @@ public class ShotGun : Gun
                     {
                         yield break;
                     }
-
                     // 총알을 소모하는 함수
                     gunSpec.CurrentAmmoCountDown();
-
                     // 로컬 UI 갱신 
-                    RenewalAmmoUI();
+                    UpdateAmmoUI();
+
                 }
+
+                // 풀매니저에서 총알을 참조하고
+                PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
+                // 슈팅만 하면 됨
+                bullet.ShottingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
 
                 bulletSpawnPoint.Rotate(new Vector3(0, 0, -shootAngle));
             }
+
 
             IsFire2 = false;
             yield return gunFireDelay;

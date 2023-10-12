@@ -27,10 +27,8 @@ public class Gun : MonoBehaviour, IGun
         SettingGun();
     }
 
-    private void Start()
-    {
-
-    }
+    private void Start() { }
+    private void Update() { }
 
     // 각 무기마다 초기 세팅값을 설정
     public virtual void SettingGun()
@@ -94,12 +92,7 @@ public class Gun : MonoBehaviour, IGun
         IsFire = true;
         while (IsFire && IsFire2)
         {
-            // 풀매니저에서 총알을 참조하고
-            PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
-            // 슈팅만 하면 됨
-            bullet.ShottingBullet(transform.right * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
-
-            // 플레이어가 가지고 있는 총이라면
+            // 플레이어가 가지고 있는 총의 총알이 0이면 소모하지 않음
             if (IsPlayerWeapon)
             {
                 if (gunSpec.CurrentAmmoCount <= 0)
@@ -109,9 +102,14 @@ public class Gun : MonoBehaviour, IGun
 
                 // 총알을 소모하는 함수
                 gunSpec.CurrentAmmoCountDown();
+                UpdateAmmoUI();
 
-                RenewalAmmoUI();
             }
+
+            // 풀매니저에서 총알을 참조하고
+            PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
+            // 슈팅만 하면 됨
+            bullet.ShottingBullet(transform.right * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
 
             IsFire2 = false;
             yield return gunFireDelay;
@@ -136,7 +134,7 @@ public class Gun : MonoBehaviour, IGun
     }
 
     // 총알 UI 갱신하는 함수
-    public void RenewalAmmoUI()
+    public void UpdateAmmoUI()
     {
         // 로컬에서만 실행해야 하는 함수
         if (IsLocalItem)

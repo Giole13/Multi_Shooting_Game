@@ -53,7 +53,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         }
 
         // 로컬의 총 UI 갱신
-        playerBaseGun.RenewalAmmoUI();
+        playerBaseGun.UpdateAmmoUI();
     }
 
     private void FixedUpdate()
@@ -201,7 +201,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
         }
 
         // 로컬인 경우 UI 갱신
-        playerBaseGun.RenewalAmmoUI();
+        playerBaseGun.UpdateAmmoUI();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

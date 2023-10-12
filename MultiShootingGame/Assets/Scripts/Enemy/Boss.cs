@@ -34,21 +34,6 @@ public class Boss : Enemy
             }
             return;
         }
-        bool IsKnockback = false;
-        // 넉백하는 코루틴
-        IEnumerator Knockback()
-        {
-            // 넉백중이면 코루틴 취소
-            if (IsKnockback)
-            {
-                yield break;
-            }
-            stats.Speed *= -1;
-            IsKnockback = true;
-            yield return KnockbackTime;
-            IsKnockback = false;
-            stats.Speed *= -1;
-        }
         StartCoroutine(Knockback());
     }
 
