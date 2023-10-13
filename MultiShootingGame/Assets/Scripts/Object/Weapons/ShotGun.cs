@@ -45,7 +45,7 @@ public class ShotGun : Gun
                         yield break;
                     }
                     // 총알을 소모하는 함수
-                    gunSpec.CurrentAmmoCountDown();
+                    gunSpec.DecreaseCurrentAmmo();
                     // 로컬 UI 갱신 
                     UpdateAmmoUI();
 
@@ -54,7 +54,7 @@ public class ShotGun : Gun
                 // 풀매니저에서 총알을 참조하고
                 PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
                 // 슈팅만 하면 됨
-                bullet.ShottingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
+                bullet.ShootingBullet(bulletSpawnPoint.up * gunSpec.BulletSpeed, transform.position, transform.parent.rotation, gunSpec.GunDamage);
 
                 bulletSpawnPoint.Rotate(new Vector3(0, 0, -shootAngle));
             }

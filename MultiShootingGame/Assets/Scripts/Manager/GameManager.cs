@@ -11,14 +11,14 @@ using UnityEngine.Rendering;
 public class GameManager : Singleton<GameManager>
 {
     #region 플레이어 스탯 UI 스크립트
-    private PlayerStatsUI playerStatsUI = null;
-    public PlayerStatsUI PlayerStatsUI
+    private UIManager playerStatsUI = null;
+    public UIManager PlayerStatsUI
     {
         get
         {
             if (playerStatsUI is null)
             {
-                playerStatsUI = GameObject.Find("PlayerUI").GetComponent<PlayerStatsUI>();
+                playerStatsUI = GameObject.Find("UIManager").GetComponent<UIManager>();
                 return playerStatsUI;
             }
             return playerStatsUI;

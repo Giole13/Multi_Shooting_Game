@@ -33,6 +33,8 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     private Transform targetTransform;
     private Rigidbody2D enemyRigid;
 
+    [SerializeField] private float enemyScale;
+
 
     // 풀에 다시 넣을건지를 판단하는 bool
     protected bool IsPoolInsert = false;
@@ -61,6 +63,7 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     {
         stats = new Stats(5, 1, 1f);
         IsPoolInsert = true;
+        enemyScale = 1f;
     }
 
     private void FixedUpdate()
@@ -91,8 +94,8 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
 
         // 총알이 왼쪽으로 넘어가면 왼쪽으로 뒤집어 주기
         float flipX = (gunDir.x <= 0) ? -1f : 1f;
-        enemyGun.transform.parent.localScale *= new Vector2(flipX, 1f);
-        transform.localScale *= new Vector2(flipX, 1f);
+        enemyGun.transform.parent.localScale = new Vector2(flipX, 1f);
+        transform.localScale = new Vector2(flipX, 1f) * enemyScale;
 
         // 총이 플레이어 방향으로 회전하기
         float z = Mathf.Atan2(gunDir.y, gunDir.x) * Mathf.Rad2Deg;
@@ -138,7 +141,6 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
-
     }
 
     private IEnumerator SearchingTargetToDistanceCompare()

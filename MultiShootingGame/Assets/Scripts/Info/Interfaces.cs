@@ -43,5 +43,5 @@ public interface ISetPosition
 public interface IBullet
 {
     // 총알이 나가는 방향, 위치, 데미지
-    public void ShottingBullet(Vector2 dir, Vector2 pos, int damage);
+    public void ShootingBullet(Vector2 dir, Vector2 pos, Quaternion rot, int damage);
 }

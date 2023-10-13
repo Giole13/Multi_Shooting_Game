@@ -17,6 +17,7 @@ public class Gun : MonoBehaviour, IGun
     protected string useBulletName;
     protected bool IsPlayerWeapon;
 
+    private SpriteRenderer gunSpriteRender;
 
     // 멀티 : 로컬인지 확인하는 함수
     protected bool IsLocalItem;
@@ -25,10 +26,16 @@ public class Gun : MonoBehaviour, IGun
     private void Awake()
     {
         SettingGun();
+        TryGetComponent(out gunSpriteRender);
     }
 
     private void Start() { }
-    private void Update() { }
+    private void Update()
+    {
+        // 로컬 스케일 x가 -가 되면 
+        gunSpriteRender.flipY = (transform.parent.localScale.x <= 0) ? true : false;
+
+    }
 
     // 각 무기마다 초기 세팅값을 설정
     public virtual void SettingGun()
@@ -69,6 +76,7 @@ public class Gun : MonoBehaviour, IGun
                 break;
         }
 
+        TryGetComponent<SpriteRenderer>(out gunSpriteRender);
         GetComponent<Collider2D>().enabled = false;
         IsFire2 = true;
         transform.localPosition = new Vector2(1f, 0f);
@@ -101,7 +109,7 @@ public class Gun : MonoBehaviour, IGun
                 }
 
                 // 총알을 소모하는 함수
-                gunSpec.CurrentAmmoCountDown();
+                gunSpec.DecreaseCurrentAmmo();
                 UpdateAmmoUI();
 
             }
@@ -109,7 +117,7 @@ public class Gun : MonoBehaviour, IGun
             // 풀매니저에서 총알을 참조하고
             PoolManager.Instance.PullItObject(useBulletName).TryGetComponent<IBullet>(out bullet);
             // 슈팅만 하면 됨
-            bullet.ShottingBullet(transform.right * gunSpec.BulletSpeed, transform.position, gunSpec.GunDamage);
+            bullet.ShootingBullet(transform.right * gunSpec.BulletSpeed, transform.position, transform.parent.rotation, gunSpec.GunDamage);
 
             IsFire2 = false;
             yield return gunFireDelay;
@@ -143,5 +151,12 @@ public class Gun : MonoBehaviour, IGun
             GameManager.Instance.PlayerStatsUI.
                 SetAmmoTxet(gunSpec.CurrentAmmoCount, gunSpec.MaxAmmoCount, gunSpec.IsUnlimitedBullets);
         }
+    }
+
+    // 현재 총의 탄약을 전부 채워주는 함수
+    public void SupplyGunAmmo()
+    {
+        gunSpec.IncreaseCurrentAmmo();
+        UpdateAmmoUI();
     }
 }

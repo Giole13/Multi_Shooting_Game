@@ -20,12 +20,13 @@ public class Bullet : MonoBehaviour, IBullet
     }
 
     // 총알을 발사하는 것을 구현
-    public void ShottingBullet(Vector2 dir, Vector2 pos, int _damage)
+    public void ShootingBullet(Vector2 dir, Vector2 pos, Quaternion rot, int _damage)
     {
         gameObject.SetActive(true);
         life = true;
         bulletRigid = GetComponent<Rigidbody2D>();
         transform.position = pos;
+        transform.rotation = rot;
         bulletRigid.velocity = dir;
         damage = _damage;
         StartCoroutine(FadeAwayTimeBullet());

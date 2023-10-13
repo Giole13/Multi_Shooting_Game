@@ -19,6 +19,8 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
     [SerializeField] private Transform weaponPointTransform;
     [SerializeField] private Transform playerSkillTransform;
 
+
+
     private Quaternion networkRotation;
 
     public Vector2 bulletDir
@@ -116,6 +118,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
     private bool IsSkillActive;
 
     // 스킬을 사용하는 함수
+    // 키 : E 호출
     private void OnSubSkill()
     {
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
@@ -130,6 +133,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
             }
             IsSkillActive = true;
             playerSkillTransform.gameObject.SetActive(true);
+            playerSkillTransform.SetParent(transform.parent);
             float scale = 0.1f;
             while (true)
             {
@@ -141,6 +145,8 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
                 {
                     playerSkillTransform.gameObject.SetActive(false);
                     IsSkillActive = false;
+                    playerSkillTransform.SetParent(transform);
+                    playerSkillTransform.localPosition = Vector3.zero;
                     yield break;
                 }
             }
@@ -150,6 +156,7 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
 
 
     // 가지고 있는 총을 스왑하는 함수
+    // 키 : F 호출
     private void OnGunChange()
     {
         // 멀티플레이인 경우

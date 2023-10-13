@@ -46,13 +46,19 @@ public struct GunSpecifications
     public bool IsUnlimitedBullets { get; private set; }
 
     // 총의 현재 탄약수를 줄여주는 함수
-    public void CurrentAmmoCountDown()
+    public void DecreaseCurrentAmmo()
     {
         if (IsUnlimitedBullets)
         {
             return;
         }
         CurrentAmmoCount--;
+    }
+
+    // 총알을 모두 채우는 함수
+    public void IncreaseCurrentAmmo()
+    {
+        CurrentAmmoCount = MaxAmmoCount;
     }
 
     // 총의 데미지를 설정하는 함수
