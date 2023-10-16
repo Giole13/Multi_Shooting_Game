@@ -141,6 +141,7 @@ MonoBehaviour:
   weaponPointTransform: {fileID: 5998749711544631006}
   networkRotation: {x: 0, y: 0, z: 0, w: 0}
   bulletSpeed: 10
+  ammoPack: {fileID: 6930538076028598307, guid: 26f0cf75070a84e4cb7291d8e2d2c82a, type: 3}
   enemyScale: 0
 --- !u!50 &6129722201098423278
 Rigidbody2D:

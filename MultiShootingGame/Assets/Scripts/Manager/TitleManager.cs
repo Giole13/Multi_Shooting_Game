@@ -25,6 +25,7 @@ public class TitleManager : MonoBehaviour
 
     // 캐릭터 선택시 고른 것을 나타내주는 배열
     [SerializeField] private Transform[] playerSelectTransforms;
+    [SerializeField] private Button readyPlayBtn;
 
 
 
@@ -108,6 +109,8 @@ public class TitleManager : MonoBehaviour
     // 게임 플레이 준비 완료 버튼 (1차 준비)
     public void ReadyGamePlayBtn()
     {
+        readyPlayBtn.interactable = false;
+
         // 싱글플레이일 경우 실행하는 로직
         if (GameManager.Instance.IsMultiPlay == false)
         {

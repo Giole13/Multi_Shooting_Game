@@ -92,10 +92,10 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
     }
 
+
     // 멀티 환경으로 게임 시작
     public void StartInGame()
     {
-
         photonView.RPC("ReadyGamePlayRPC", RpcTarget.All);
     }
 

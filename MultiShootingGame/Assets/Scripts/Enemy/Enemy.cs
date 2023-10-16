@@ -14,6 +14,8 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     [SerializeField] Quaternion networkRotation;
 
     [SerializeField] protected float bulletSpeed = 10;
+    [SerializeField] private GameObject ammoPack;
+
 
     protected Stats stats;
     protected IBullet bullet;
@@ -22,9 +24,10 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     // 발사 주기 변수
     protected WaitForSeconds fireCycle = new WaitForSeconds(1f);
 
-
     // 넉백의 지속 시간
-    protected WaitForSeconds KnockbackTime = new WaitForSeconds(0.3f);
+    protected WaitForSeconds knockbackTime = new WaitForSeconds(0.3f);
+    // 적을 찾는 주기
+    protected WaitForSeconds searchTargetTime = new WaitForSeconds(1f);
 
 
     private SpriteRenderer spriteRenderer;
@@ -54,6 +57,9 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         {
             gameObject.SetActive(false);
         }
+
+
+
         // gameObject.SetActive(false);
     }
 
@@ -132,15 +138,15 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
     [PunRPC]
     protected void SetEnemySpawn(Vector2 position)
     {
-        TryGetComponent(out spriteRenderer);
-        originalColor = spriteRenderer.color;
-
         Init();
         gameObject.SetActive(true);
         transform.position = position;
         enemyGun.SettingGun();
         enemyGun.Init();
         enemyGun.BulletFire();
+
+        TryGetComponent(out spriteRenderer);
+        originalColor = spriteRenderer.color;
     }
 
     private IEnumerator SearchingTargetToDistanceCompare()
@@ -156,27 +162,28 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
 
         while (true)
         {
-            // 가장 가까운 플레이어를 계산해서 ViewID 값을 계산한다.
-            foreach (var target in GameManager.Instance.PlayerDictionary)
+            // 처음 한번 실행
+            // 타겟 플레이어가 비활성화 되었을 때 실행
+            if (targetDistanceFloat == float.MaxValue)
             {
-                // 해당 오브젝트가 비활성화 상태일 경우 다른 객체를 참조하고 패스
-                if (target.Value.activeSelf == false)
+                foreach (var target in GameManager.Instance.PlayerDictionary)
                 {
-                    targetDistanceFloat = float.MaxValue;
-                    continue;
-                }
-
-                // 만약 비교한 거리보다 작다면 더욱 가깝다 생각
-                if ((transform.position - target.Value.transform.position).sqrMagnitude < targetDistanceFloat)
-                {
-                    // 적과의 거리 계산 및 타겟팅
-                    targetDistanceFloat = (transform.position - target.Value.transform.position).sqrMagnitude;
-                    targetTransform = GameManager.Instance.PlayerDictionary[target.Key].transform;
+                    // 자신과 가까운 적을 타겟팅 한다
+                    if ((transform.position - target.Value.transform.position).sqrMagnitude < targetDistanceFloat)
+                    {
+                        targetDistanceFloat = (transform.position - target.Value.transform.position).sqrMagnitude;
+                        targetTransform = GameManager.Instance.PlayerDictionary[target.Key].transform;
+                        Debug.Log("타겟팅 완료");
+                    }
                 }
             }
-            yield return new WaitForSeconds(1f);
-            // 1초마다 갱신
-            targetDistanceFloat = (transform.position - targetTransform.position).sqrMagnitude;
+
+            if (targetTransform.gameObject.activeSelf == false)
+            {
+                targetDistanceFloat = float.MaxValue;
+            }
+
+            yield return searchTargetTime;
         }
     }
 
@@ -189,12 +196,15 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         if (stats.Health <= 0)
         {
             gameObject.SetActive(false);
+            spriteRenderer.color = originalColor;
 
             // 몬스터는 풀에 넣어주기
             if (IsPoolInsert)
             {
                 IsPoolInsert = false;
                 PoolManager.Instance.InsertObject("Enemy", gameObject);
+                // 탄약 팩 드랍
+                Instantiate(ammoPack, transform.position, Quaternion.identity);
             }
             return;
         }
@@ -214,10 +224,9 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         }
         stats.Speed *= -1;
         IsKnockback = true;
-        yield return KnockbackTime;
+        yield return knockbackTime;
         IsKnockback = false;
         stats.Speed *= -1;
-
         spriteRenderer.color = originalColor;
     }
 

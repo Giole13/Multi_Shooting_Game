@@ -632,6 +632,7 @@ MonoBehaviour:
   playerSelectTransforms:
   - {fileID: 3091432500776214788}
   - {fileID: 1091938503}
+  readyPlayBtn: {fileID: 1570242594}
 --- !u!1 &178039391
 GameObject:
   m_ObjectHideFlags: 0

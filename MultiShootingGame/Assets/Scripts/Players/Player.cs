@@ -63,7 +63,7 @@ public class Player : MonoBehaviourPun, IDamageable
         // 피격시 흔들림 효과 추가
         GameManager.Instance.BeAttackedEffect();
 
-        return; // 디버그용
+        // return; // 디버그용
 
         // 체력이 0이 되면 엔딩 씬으로 이동
         if (stats.Health <= 0)
@@ -103,6 +103,7 @@ public class Player : MonoBehaviourPun, IDamageable
     {
         gameObject.SetActive(false);
         GameManager.Instance.ReductionPlayerLiveCount();
+        GameManager.Instance.PlayerDictionary.Remove(photonView.ViewID);
     }
 
     [PunRPC]

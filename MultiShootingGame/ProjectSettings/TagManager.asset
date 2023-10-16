@@ -39,7 +39,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Post
   m_SortingLayers:
   - name: Default
     uniqueID: 0
@@ -58,4 +58,7 @@ TagManager:
     locked: 0
   - name: Bullet
     uniqueID: 1610732853
+    locked: 0
+  - name: UI
+    uniqueID: 2945318277
     locked: 0

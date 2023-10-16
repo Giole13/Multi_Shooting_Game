@@ -11,7 +11,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private List<Transform> spawnPoint;
     [SerializeField] private Transform bossTransform;
 
-    [ReadOnly] private int maxSpawnCount = 1;
+    [ReadOnly] private int maxSpawnCount = 10;
 
     [ReadOnly] private int currentSpawnCount;
 

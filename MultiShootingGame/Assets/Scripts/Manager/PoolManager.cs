@@ -110,15 +110,35 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    // 싱글 게임의 경우 오브젝트 생성
-    private void InstantiateSingleObject()
-    {
-
-    }
-
     // 풀의 이름에서 오브젝트를 뽑는 함수
     public GameObject PullItObject(string poolName)
     {
+        // 남은 오브젝트가 1이하가 된다면 추가적으로 오브젝트 생성
+        if (objectPool[poolName].Count <= 1)
+        {
+            int addSize = 0;
+            int index = 0;
+            for (int i = 0; i < poolList.Count; i++)
+            {
+                // 같은 오브젝트 리스트 찾아서 그 수만큼 늘리기
+                if (poolList[i].ObjectName == poolName)
+                {
+                    addSize = poolList[i].poolSize;
+                    index = i;
+                }
+            }
+
+
+            Transform parentTransform = transform.GetChild(index);
+            GameObject targetObj = Instantiate(objectPool[poolName].Pop(), parentTransform);
+
+            for (int i = 0; i <= addSize; i++)
+            {
+                targetObj = Instantiate(targetObj, parentTransform);
+                targetObj.SetActive(false);
+                objectPool[poolName].Push(targetObj);
+            }
+        }
         return objectPool[poolName].Pop();
     }
 

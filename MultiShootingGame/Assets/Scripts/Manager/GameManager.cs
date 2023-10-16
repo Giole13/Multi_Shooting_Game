@@ -245,8 +245,6 @@ public class GameManager : Singleton<GameManager>
             cinemachineVCamBasicMultiChannelPerlin.m_FrequencyGain = 3f;
             isShaking = true;
 
-            Debug.Log("총알 발싸!");
-
             yield return shakeTime;
             cinemachineVCamBasicMultiChannelPerlin.m_AmplitudeGain = 0f;
             cinemachineVCamBasicMultiChannelPerlin.m_FrequencyGain = 0f;
@@ -260,6 +258,7 @@ public class GameManager : Singleton<GameManager>
         Debug.Assert(PlayerDictionary[viewID] != null);
         Debug.Assert(PlayerDictionary[viewID].transform != null);
         playerTransform = PlayerDictionary[viewID].transform;
+        chinemachineVCam.Follow = playerTransform;
     }
 
     // 멀티 플레이 설정하는 함수
