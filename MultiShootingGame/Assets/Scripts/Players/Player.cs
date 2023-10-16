@@ -46,7 +46,6 @@ public class Player : MonoBehaviourPun, IDamageable
     {
         if (photonView.IsMine == false && GameManager.Instance.IsMultiPlay) { return; }
 
-
         // 멀티 : 각 클라이언트의 자신의 체력을 동기화
         if (GameManager.Instance.IsMultiPlay)
         {
@@ -55,11 +54,14 @@ public class Player : MonoBehaviourPun, IDamageable
         // 싱글 : 체력만 소모
         else
         {
-            stats.Health -= damage;
+            BeAttackedRPC(damage);
         }
 
         // 체력 UI 갱신
+
         GameManager.Instance.PlayerStatsUI.DecreasePlayerHp();
+
+        Debug.Log($"현재 hp : {stats.Health}");
         // 피격시 흔들림 효과 추가
         GameManager.Instance.BeAttackedEffect();
 
@@ -71,6 +73,7 @@ public class Player : MonoBehaviourPun, IDamageable
             // 싱글 : 엔딩 씬으로 넘기기
             if (GameManager.Instance.IsMultiPlay == false)
             {
+                Debug.Log("씬 이동");
                 gameObject.SetActive(false);
                 GameManager.Instance.SceneMove(Define.ENDING_SCENE_NAME);
                 return;

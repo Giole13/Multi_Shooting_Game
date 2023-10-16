@@ -59,6 +59,7 @@ public class UIManager : MonoBehaviour
         // 마지막 오브젝트를 꺼내와서 꺼주기
         hpObject = hpStack.Pop();
         hpObject.SetActive(false);
+        Debug.Log($"스택 개수 : {hpStack.Count}");
     }
 
     public void IncreasePlayerHp()

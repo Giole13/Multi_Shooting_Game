@@ -14,7 +14,7 @@ public class Knight : Player
     // 초기화 함수
     protected override void Init()
     {
-        stats = new Stats(10, 2, 15f);
+        stats = new Stats(10, 1, 15f);
     }
 
 

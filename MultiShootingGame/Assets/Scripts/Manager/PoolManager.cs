@@ -128,7 +128,6 @@ public class PoolManager : MonoBehaviour
                 }
             }
 
-
             Transform parentTransform = transform.GetChild(index);
             GameObject targetObj = Instantiate(objectPool[poolName].Pop(), parentTransform);
 

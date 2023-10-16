@@ -57,17 +57,13 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         {
             gameObject.SetActive(false);
         }
-
-
-
-        // gameObject.SetActive(false);
     }
 
     // 상속받은 곳에서 사용할 것
     // 적의 정보들을 초기화하는 함수
     protected virtual void Init()
     {
-        stats = new Stats(5, 1, 1f);
+        stats = new Stats(6, 1, 1f);
         IsPoolInsert = true;
         enemyScale = 1f;
     }

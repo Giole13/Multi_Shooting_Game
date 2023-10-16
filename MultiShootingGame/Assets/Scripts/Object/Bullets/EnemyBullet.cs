@@ -12,7 +12,7 @@ public class EnemyBullet : Bullet
     private void OnTriggerEnter2D(Collider2D other)
     {
         // 플레이어와 충돌하면
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && other.gameObject.activeSelf)
         {
             other.GetComponent<IDamageable>().BeAttacked(damage);
         }

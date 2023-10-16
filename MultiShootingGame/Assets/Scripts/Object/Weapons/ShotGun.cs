@@ -17,7 +17,7 @@ public class ShotGun : Gun
     // 값 초기화
     public override void SettingGun()
     {
-        gunSpec = new GunSpecifications(1, 20f, 0.8f, 50);
+        gunSpec = new GunSpecifications(1, 20f, 1f, 50);
     }
 
     //샷건의 공격 로직

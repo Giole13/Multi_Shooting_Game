@@ -285,6 +285,7 @@ MonoBehaviour:
   weaponPointTransform: {fileID: 278437262578014540}
   networkRotation: {x: 0, y: 0, z: 0, w: 0}
   bulletSpeed: 10
+  ammoPack: {fileID: 0}
   enemyScale: 3
 --- !u!114 &7633146650383655353
 MonoBehaviour:
@@ -341,6 +342,10 @@ PrefabInstance:
     - target: {fileID: 2397325576703787679, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
       propertyPath: m_Layer
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2397325576703787679, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4273897719866949157, guid: 8e8ad80780df8de408642d57e2ff3313, type: 3}
       propertyPath: m_Enabled
