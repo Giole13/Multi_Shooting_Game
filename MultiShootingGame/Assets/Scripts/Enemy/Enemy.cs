@@ -155,25 +155,25 @@ public class Enemy : MonoBehaviourPun, ISetPosition, IDamageable, IPunObservable
         }
 
         float targetDistanceFloat = float.MaxValue;
-
         while (true)
         {
             // 처음 한번 실행
-            // 타겟 플레이어가 비활성화 되었을 때 실행
+            // 1. 비교거리가 최대값일때 플레이어 탐색
             if (targetDistanceFloat == float.MaxValue)
             {
+                // 2. 플레이어 Dictionary에서 플레이어를 찾아 계산을 한다.
                 foreach (var target in GameManager.Instance.PlayerDictionary)
                 {
-                    // 자신과 가까운 적을 타겟팅 한다
+                    // 3. 자신과 가까운 적을 타겟팅 한다
                     if ((transform.position - target.Value.transform.position).sqrMagnitude < targetDistanceFloat)
                     {
                         targetDistanceFloat = (transform.position - target.Value.transform.position).sqrMagnitude;
                         targetTransform = GameManager.Instance.PlayerDictionary[target.Key].transform;
-                        Debug.Log("타겟팅 완료");
                     }
                 }
             }
 
+            // 4. 타겟이 비활성화라면 비교거리를 최대로 설정
             if (targetTransform.gameObject.activeSelf == false)
             {
                 targetDistanceFloat = float.MaxValue;

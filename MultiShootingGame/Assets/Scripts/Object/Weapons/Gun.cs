@@ -107,11 +107,9 @@ public class Gun : MonoBehaviour, IGun
                 {
                     yield break;
                 }
-
                 // 총알을 소모하는 함수
                 gunSpec.DecreaseCurrentAmmo();
                 UpdateAmmoUI();
-
             }
 
             // 풀매니저에서 총알을 참조하고

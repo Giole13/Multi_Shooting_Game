@@ -38,7 +38,7 @@ public class PoolManager : MonoBehaviour
     [SerializeField] private List<poolObjectInfo> poolList;
 
     [Serializable]
-    private struct poolObjectInfo
+    private class poolObjectInfo
     {
         public GameObject obj;
         public int poolSize;
@@ -123,15 +123,20 @@ public class PoolManager : MonoBehaviour
                 // 같은 오브젝트 리스트 찾아서 그 수만큼 늘리기
                 if (poolList[i].ObjectName == poolName)
                 {
+                    // 풀 사이즈 증가
                     addSize = poolList[i].poolSize;
+                    poolList[i].poolSize += addSize;
                     index = i;
                 }
             }
 
+            // 풀링할 오브젝트를 넣는 부모의 객체 확인
             Transform parentTransform = transform.GetChild(index);
+            Debug.Assert(parentTransform.name == poolName + "bundle");
             GameObject targetObj = Instantiate(objectPool[poolName].Pop(), parentTransform);
 
-            for (int i = 0; i <= addSize; i++)
+            // 기존의 풀 사이즈 만큼 객체 생성 및 스택 Push()
+            for (int i = 0; i < addSize; i++)
             {
                 targetObj = Instantiate(targetObj, parentTransform);
                 targetObj.SetActive(false);

@@ -22,7 +22,7 @@ public class Stats
 }
 
 // 총의 기본 스펙
-public struct GunSpecifications
+public class GunSpecifications
 {
     public GunSpecifications(int gunDamage, float bulletSpeed, float firedDelayTime, int maxAmmoCount, bool isUnlimitedBullets = false)
     {
@@ -42,7 +42,6 @@ public struct GunSpecifications
     public int MaxAmmoCount { get; private set; }
     // 총의 현재 탄약수
     public int CurrentAmmoCount { get; private set; }
-
     public bool IsUnlimitedBullets { get; private set; }
 
     // 총의 현재 탄약수를 줄여주는 함수

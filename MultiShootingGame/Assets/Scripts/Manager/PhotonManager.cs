@@ -61,7 +61,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         serverInfoText.text = $"현재 방의 인원 : {room.PlayerCount}";
 
         // 현재 플레이어가 MaxPlayers 면 실행
-        // 디버그용 /*room.MaxPlayers*/
         yield return new WaitUntil(() => room.MaxPlayers == room.PlayerCount);
         serverInfoText.text = $"현재 방의 인원 : {room.PlayerCount}";
 
@@ -92,7 +91,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
     }
 
-
     // 멀티 환경으로 게임 시작
     public void StartInGame()
     {
@@ -114,13 +112,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
         }
     }
 
-    // [PunRPC]
-    // private void SceneMove()
-    // {
-    //     // 5초 후 게임 시작
-    //     StartCoroutine(StartGame());
-    // }
-
     private IEnumerator StartGame()
     {
         for (int i = 5; i > 0; i--)
@@ -130,8 +121,6 @@ public class PhotonManager : MonoBehaviourPunCallbacks
             titleManager.StartCountDownToGameStart(i);
         }
 
-        // yield return new WaitForSeconds(5f);
-        // titleManager.StartCountDownToGameStart(5);
         SceneManager.LoadSceneAsync(Define.INGAME_SCENE_NAME);
     }
 

@@ -70,7 +70,6 @@ public class GameManager : Singleton<GameManager>
     }
     #endregion 멀티 : 플레이어의 생존한 사람의 수를 나타내는 정수
 
-
     // 싱글, 멀티 구분 bool 타입
     public bool IsMultiPlay { get; private set; } = false;
 
@@ -163,7 +162,6 @@ public class GameManager : Singleton<GameManager>
             }
 
             playerTransform = obj.transform;
-            obj.GetComponent<PhotonRigidbody2DView>().enabled = false;
             obj.GetComponent<PhotonTransformView>().enabled = false;
             chinemachineVCam.Follow = playerTransform;
             return;

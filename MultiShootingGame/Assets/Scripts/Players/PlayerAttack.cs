@@ -66,6 +66,8 @@ public class PlayerAttack : MonoBehaviourPun, IGunFirstAcquisition, IPunObservab
             // 지연보상으로 현재 거리와 동기화 된 거리를 보간한다.
             weaponPointTransform.rotation = Quaternion.RotateTowards(weaponPointTransform.rotation,
                                                     networkRotation, 1000f);
+            // weaponPointTransform.rotation = networkRotation;
+            // 동기화가 적절하게 이루어지지 않음
             return;
         }
 

@@ -33,7 +33,6 @@ public class LoadingManager : Singleton<LoadingManager>
 
         StartCoroutine(LoadingCharacterScene());
         StartCoroutine(LoadingIngameScene());
-
         DontDestroyOnLoad(gameObject);
     }
 
